@@ -1,22 +1,24 @@
+##THE GREAT G.A.T.S.PY
+#Genetic Algoritm for Travelling Salesman problem in PYthon
+
 import random
 import pandas as pd
 import matplotlib.pyplot as plt
-from multiprocessing import Process
 import PySimpleGUI as sg
 import numpy as np
+import sys
+import argparse
+
 class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-    def __sub__(self, city):
-        dx = self.x - city.x
-        dy = self.y - city.y
+    def __sub__(self, point2):
+        dx = self.x - point2.x
+        dy = self.y - point2.y
         dist = np.sqrt((dx ** 2) + (dy ** 2))
         return dist
-
-    def __repr__(self):
-        return f"({self.x}, {self.y})"
 
 
 class Path(list):
@@ -128,78 +130,106 @@ class Population(list):
     def next_generation(self):
         return self.rank_paths().select().breed().mutate()
 
-def plot(x, y):
-    plt.plot(x, y)
-    plt.show()
+def to_plot(path):
+    return (
+        [p.x for p in path] + [path[0].x],
+        [p.y for p in path] + [path[0].y],
+    )
 
 def evolve(population, generations_num):
     print(f"Initial distance: { - 1/population.rank_paths()[0].loss}")
     distances = []
-    best_path = population.rank_paths()[0]
+    fig, ax = plt.subplots()
+    data = to_plot(population[0])
+    lines = ax.plot(
+        data[0],
+        data[1],
+        marker='o'
+    )
+    fig.canvas.manager.show()
     for i in range(generations_num):
         population = population.next_generation()
         best_path = population.rank_paths()[0]
         distances.append(best_path.loss)
         print(f"Gen: {i} --- Loss: {best_path.loss}")
-        if i%50 == 49:
-            if i > 50:
-                p.terminate()
-            p = Process(target=plot, args=([p.x for p in best_path], [p.y for p in best_path]))
-            p.start()
-    plt.plot(distances)
+        if i%20 == 0:
+            data = to_plot(best_path)
+            lines[0].set_data(
+                data[0],
+                data[1]
+            )
+            fig.canvas.draw()
+            fig.canvas.flush_events()
+    plt.close()
+    plt.plot(range(len(distances)), distances)
     plt.ylabel("Distance")
-    plt.xlabel("Generation")
+    plt.xlabel("Generation")    
+    plt.ion()
     plt.show()
+    # update figure, calc stuff
+    plt.pause(10)
     print(f"Final distance: {- 1 / best_path.loss}")
     return best_path
 
 
-points_num = 50
-population_size = 100
-generations_num = 700
-elite_num = 50 #better near 30%
-mutation_rate = 0.00 #if it's 0, convergence is faster but progress curve is a broken line
-
-BOX_SIZE = 25
-
-layout = [
-    [sg.Text(f'Select {points_num} points'), sg.Text('', key='-OUTPUT-')],
-    [sg.Graph((800, 800), (0, 450), (450, 0), key='-GRAPH-',
-              change_submits=True, drag_submits=False)],
-    [sg.Button('Show'), sg.Button('Exit')]
-]
-
-window = sg.Window('Genetic Algorithm for TSP', layout, finalize=True)
-
-g = window['-GRAPH-']
-
-g.draw_rectangle((BOX_SIZE, BOX_SIZE), (BOX_SIZE, BOX_SIZE))
-
-while True:             # Event Loop
-    event, values = window.read()
-    print(event, values)
-    if event in (None, 'Exit'):
-        break
-    mouse = values['-GRAPH-']
-
-    if event == '-GRAPH-':
-        if mouse == (None, None):
-            continue
-        box_x = mouse[0]/BOX_SIZE
-        box_y = mouse[1]/BOX_SIZE
-        print(box_x, box_y)
-
-window.close()
-
-initial_path = Path( 
-    [
-        Point(
-            x=int(random.random() * 200), 
-            y=int(random.random() * 200)
-        ) 
-        for i in range(points_num)
+def gui_choose_points():
+    path = Path([])
+    BOX_SIZE = 25
+    layout = [
+        [sg.Text(f'Choose {points_num} points'), sg.Text('', key='-OUTPUT-')],
+        [sg.Graph((800, 800), (0, 450), (450, 0), key='-GRAPH-',
+                change_submits=True, drag_submits=False)],
+        [sg.Button('Show'), sg.Button('Exit')]
     ]
-)
+    window = sg.Window('THE GREAT G.A.T.S.PY', layout, finalize=True)
+    g = window['-GRAPH-']
+    g.draw_rectangle((BOX_SIZE, BOX_SIZE), (BOX_SIZE, BOX_SIZE))
+    while True:
+        event, values = window.read()
+        if event in (None, 'Exit'):
+            break
+        mouse = values['-GRAPH-']
+        if event == '-GRAPH-':
+            if mouse == (None, None): continue
+            box_x = mouse[0]
+            box_y = mouse[1]
+            path.append(Point(box_x/BOX_SIZE, box_y/BOX_SIZE))
+            g.draw_circle((box_x, box_y), 5, fill_color='black', line_color='white')
+            print(f"Chosen point: ({box_x}, {box_y})")
+    window.close()
+    return path
+
+parser = argparse.ArgumentParser(description='THE GREAT G.A.T.S.PY --- Genetic Algoritm for Travelling Salesman problem in PYthon')
+parser.add_argument('--rand', default=False, action='store_true', help='extract points randomly (default: False)')
+parser.add_argument('-c', type=int, default=30, help="number of cities when extracted randomly (default: 50)")
+parser.add_argument('-s', type=int, default=100, help="size of populations (default: 100)")
+parser.add_argument('-g', type=int, default=700, help="number of generations (default: 700)")
+parser.add_argument('-e', type=int, default=30, help="number of elite individuals (default: 50)")
+parser.add_argument('-m', type=float, default=0.005, help="mutation rate (default: 0.005)")
+args = parser.parse_args()
+
+points_num = args.c
+population_size = args.s
+generations_num = args.g
+elite_num = args.e #better near 30%
+mutation_rate = args.m #if it's 0, convergence is faster but progress curve is a broken line
+
+try:
+    if sys.argv[1] != "--rand":
+        raise IndexError
+    else:
+        initial_path = Path( 
+        [
+            Point(
+                x=int(random.random() * 200), 
+                y=int(random.random() * 200)
+            ) 
+            for i in range(points_num)
+        ]
+    )
+except IndexError:
+    initial_path = gui_choose_points()
+    
 
 initial_population = Population([initial_path]*population_size)
 initial_population.set_params(elite_num=elite_num, mutation_rate=mutation_rate)
