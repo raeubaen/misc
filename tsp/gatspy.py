@@ -8,7 +8,12 @@ import PySimpleGUI as sg
 import numpy as np
 import sys
 import argparse
+import os
 
+
+if not os.path.exists("data"):
+    os.makedirs("data")
+data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 
 class Point:
     def __init__(self, x, y):
@@ -63,64 +68,66 @@ class Path(list):
         return self
 
 
-class Population(list):
-    def reconvert(self, list_object):
-        new_instance = self.__class__(list_object)
-        new_instance.elite_num = self.elite_num
-        new_instance.mutation_rate = self.mutation_rate
-        return new_instance
+#bound to Population class
+def modify_path_list(f):
+        def wrapper(self):
+            self.pl = f(self, self.pl)
+            return self
+        return wrapper
 
+class Population():
+    def __init__(self, path_list):
+        self.pl = path_list
+        
     def set_params(self, elite_num=None, mutation_rate=None):
         self.elite_num, self.mutation_rate = elite_num, mutation_rate
         if elite_num is None:
             self.elite_num = len(self) // 5
         if mutation_rate is None:
             self.mutation_rate = 0.01
-
     @property
     def total_loss(self):
         total_loss = 0
-        for path in self:
+        for path in self.pl:
             total_loss += path.loss
         return -total_loss
 
-    def rank_paths(self):
-        sorted_population = self.__class__(sorted(self, key=lambda x: x.loss))
-        return self.reconvert(sorted_population)
-
-    def select(self):
-        elite_num = self.elite_num
-        selected = self[:elite_num]
-        s = {i: self[i].loss for i in range(len(self))}
+    @modify_path_list
+    def rank_paths(self, pl):
+        return sorted(pl, key=lambda x: x.loss)
+        
+    @modify_path_list
+    def select(self, pl):
+        selected = pl[:self.elite_num]
+        s = {i: pl[i].loss for i in range(len(pl))}
         df = pd.DataFrame(s.items(), columns=["", "loss"])
         df["cumulative_sum"] = df.loss.cumsum()
         df["freq"] = (
             df.cumulative_sum / df.loss.sum()
         )  # weights individuals loss over the whole population
         # higher loss - more copies
-        for i in range(len(self) - elite_num):
+        for i in range(len(pl) - elite_num):
             rand = random.random()
-            for i in range(len(self)):
+            for i in range(len(pl)):
                 if df.iat[i, 3] > rand:  # iac is 10x faster then iloc[i]['freq']
-                    selected.append(self[i])
+                    selected.append(pl[i])
                     break
-        return self.reconvert(selected)
+        return selected
 
-    def breed(self):
-        elite_num = self.elite_num
-        children = self[:elite_num]
-        non_elite = random.sample(self, len(self))
-        length = len(self) - elite_num
+    @modify_path_list
+    def breed(self, pl):
+        children = pl[:self.elite_num]
+        non_elite = random.sample(pl, len(pl))
+        length = len(pl) - elite_num
         for i in range(length):
             # to be sure everyone respects monogamy and every couple has exactly 2 children
-            child = non_elite[i] & non_elite[len(self) - i - 1]
+            child = non_elite[i] & non_elite[len(pl) - i - 1]
             children.append(child)
-        return self.reconvert(children)
+        return children
 
-    def mutate(self):
-        mutation_rate = self.mutation_rate
-        mutated_population = [path.mutate(mutation_rate) for path in self]
-        return self.reconvert(mutated_population)
+    @modify_path_list
+    def mutate(self, pl):
+        return [path.mutate(self.mutation_rate) for path in pl]
 
     def next_generation(self):
         return self.rank_paths().select().breed().mutate()
@@ -130,16 +137,23 @@ def to_plot(path):
     return ([p.x for p in path] + [path[0].x], [p.y for p in path] + [path[0].y])
 
 
+def save_path(path, file_name):
+    pd.DataFrame(
+        [[p.x, p.y] for p in path], 
+        columns=["x", "y"]
+    ).to_csv(file_name)
+
+
 def evolve(population, generations_num, to_save):
-    print(f"Initial distance: { - 1/population.rank_paths()[0].loss}")
+    print(f"Initial distance: { - 1/population.rank_paths().pl[0].loss}")
     distances = []
     fig, ax = plt.subplots()
-    data = to_plot(population[0])
+    data = to_plot(population.pl[0])
     lines = ax.plot(data[0], data[1], marker="o")
     fig.canvas.manager.show()
     for i in range(generations_num):
         population = population.next_generation()
-        best_path = population.rank_paths()[0]
+        best_path = population.rank_paths().pl[0]
         distances.append(best_path.loss)
         print(f"Gen: {i} --- Loss: {best_path.loss}")
         if i % 20 == 0:
@@ -147,12 +161,16 @@ def evolve(population, generations_num, to_save):
             lines[0].set_data(data[0], data[1])
             fig.canvas.draw()
             fig.canvas.flush_events()
+    if to_save: 
+        plt.savefig(os.path.join(data_path, "final_path.png"))
+        save_path(best_path, os.path.join(data_path, "final_path.csv"))
     plt.close()
     plt.plot(range(len(distances)), distances)
     plt.ylabel("Distance")
     plt.xlabel("Generation")
     plt.ion()
     plt.show()
+    if to_save: plt.savefig(os.path.join(data_path, "progress.png"))
     # update figure, calc stuff
     plt.pause(10)
     print(f"Final distance: {- 1 / best_path.loss}")
@@ -215,10 +233,7 @@ else:
         ]
     )
 
-if args.save:
-    df = pd.DataFrame(initial_path, columns=["x", "y"])
-    print(df)
-    df.to_csv("initial_path.csv")
+if args.save: save_path(initial_path, os.path.join(data_path, "initial_path.csv"))
 initial_population = Population([initial_path] * population_size)
 initial_population.set_params(elite_num=elite_num, mutation_rate=mutation_rate)
 evolve(initial_population, generations_num, args.save)
