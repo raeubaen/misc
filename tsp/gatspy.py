@@ -42,7 +42,6 @@ class Path(list):
     # returns child - ordered crossover;
     # gene taken from parent1 (self) is inserted within parent2 and remanining basis are shifted without changing the order
     def __and__(self, parent2):
-        child, temp = [], []
         ind1 = int(random.random() * len(self))
         ind2 = int(random.random() * len(self))
         start_ind, end_ind = min(ind1, ind2), max(ind1, ind2)
