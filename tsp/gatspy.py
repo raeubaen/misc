@@ -91,7 +91,7 @@ def to_plot(path):
 
 def save_path_csv(path, file_name):
     pd.DataFrame(
-        [[p.x, p.y] for p in path], 
+        [[p.x, p.y] for p in path],
         columns=["x", "y"]
     ).to_csv(os.path.join(data_path, file_name))
 
@@ -112,7 +112,7 @@ def evolve(population, generations_num=700, elite_num=30, mutation_rate=0.005, t
             lines[0].set_data(data[0], data[1])
             fig.canvas.draw()
             fig.canvas.flush_events()
-    if to_save: 
+    if to_save:
         plt.savefig(os.path.join(data_path, "final_path.png"))
         save_path_csv(best_path, "final_path.csv")
     plt.close()
@@ -167,7 +167,7 @@ parser.add_argument("-m", type=float, default=0.005, help="mutation rate (defaul
 # over a certain value the algorithm could stop converging
 args = parser.parse_args()
 
-if not args.rand: 
+if not args.rand:
     initial_path = gui_choose_points(args.p)
 else:
     rand_x, rand_y = np.random.rand(args.p,), np.random.rand(args.p,)
