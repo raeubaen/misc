@@ -29,10 +29,9 @@ class Path(list):
     @property
     def loss(self):
         length = 0
-        cities_num = len(self)
-        for i in range(cities_num):
+        for i in range(len(self)):
             prev_city = self[i]
-            if i != cities_num - 1:
+            if i != len(self) - 1:
                 next_city = self[i + 1]
             else:
                 next_city = self[0]
@@ -50,12 +49,12 @@ class Path(list):
         return self.__class__(child)
 
     def mutate(self, mutation_rate):
-        for swapped in range(len(self)):
+        for i in range(len(self)):
             if random.random() < mutation_rate:
                 swap_with = int(random.random() * len(self))
                 temp = self[swap_with]
-                self[swap_with] = self[swapped]
-                self[swapped] = temp
+                self[swap_with] = self[i]
+                self[i] = temp
         return self
 
 
@@ -73,10 +72,11 @@ class Population(list):
 
     def breed(self, elite_num):
         children = self[:elite_num]
-        non_elite = random.sample(self, len(self))
-        for i in range(len(self) - elite_num):
+        non_elite_num = len(self) - elite_num
+        non_elite = random.sample(self[elite_num:], non_elite_num)
+        for i in range(non_elite_num):
             # to be sure everyone respects monogamy and every couple has exactly 2 children
-            child = non_elite[i] & non_elite[len(self) - i - 1]
+            child = non_elite[i] & non_elite[non_elite_num - i - 1]
             children.append(child)
         return self.__class__(children)
 
