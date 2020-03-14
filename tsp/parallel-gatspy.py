@@ -23,12 +23,6 @@ class Point:
         dist = np.sqrt((dx ** 2) + (dy ** 2))
         return dist
 
-    def __repr__(self):
-        return f"{self.x} {self.y}"
-        
-    def __eq__(self, p2):
-        return self.x == p2.x and self.y == p2.y
-
 class Path(list):
     @property
     def loss(self):
@@ -101,7 +95,7 @@ def save_path_csv(path, file_name):
 def evolve(population, args, queue_list, return_queue_list, island_num):
     elite_num, generations_num, mutation_rate = args.e, args.g, args.m
     test, dist, error = args.test, args.d, args.u
-    immigrant_num = int(0.1 * len(population))
+    immigrant_num = int(0.01 * len(population))
     for i in range(generations_num):
         population = population.next_generation(elite_num, mutation_rate) #always ordered
         if i % 20 == 0:
@@ -114,9 +108,6 @@ def evolve(population, args, queue_list, return_queue_list, island_num):
         elif test and abs(best_path.loss - dist) < error:
             print("CONVERGED", flush=True)
             return
-
-
-
     return_queue_list[island_num].put(best_path)
 
 def gui_choose_points(points_num):
@@ -183,14 +174,14 @@ else:
     initial_path = Path([Point(x=rand_x[i], y=rand_y[i]) for i in range(args.p)])
 
 random.shuffle(initial_path)
-if args.save: 
+if args.save:
     if not os.path.exists("data"):
         os.makedirs("data")
     data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
     save_path_csv(initial_path, "initial_path.csv")
 
 #starting parallel code (lucky Carlo)
-usable_cpu = cpu_count(logical=False) - 1 #for Ruben it's 1 :( POOR RUBEN !!1!
+usable_cpu = cpu_count(logical=False) -1 #for Ruben it's 1 :( POOR RUBEN !!1!
 initial_population = Population([initial_path] * int(args.s))
 manager = Manager()
 queue_list, return_queue_list = [manager.Queue()]*usable_cpu, [manager.Queue()]*usable_cpu
@@ -199,6 +190,12 @@ evolve_args_partial_list = [initial_population, args, queue_list, return_queue_l
 stop_callback = lambda x: quit(args.test)
 p = Pool(usable_cpu)
 for i in range(usable_cpu):
-    p.apply_async(evolve, args=tuple(evolve_args_partial_list + [i]), callback=stop_callback)
+    p.apply_async(evolve, args=tuple(evolve_args_partial_list + [i]), callback=stop_callback, error_callback=error_callback)
 p.close()
 p.join()
+if not args.test:
+    final_path = Population([q.get() for q in return_queue_list]).rank_paths()[0]
+    print(final_path)
+    data = to_plot(final_path)
+    plt.plot(data[0], data[1])
+    plt.show()
