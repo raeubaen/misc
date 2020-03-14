@@ -144,58 +144,63 @@ def quit(test, *args, **kwargs):
 def error_callback(exception, *args, **kwargs):
     print(exception, flush=True)
 
-parser = argparse.ArgumentParser(description="THE GREAT G.A.T.S.PY --- Genetic Algoritm for Travelling Salesman problem in PYthon")
-parser.add_argument("--rand", default=False, action="store_true", help="extract points randomly (default: False)")
-parser.add_argument("--file", default=None, help="takes initial path from file (.csv with cols index-x-y) (default: None)")
-parser.add_argument("--save", default=False, action="store_true", help="saves pictures and best path data (default: False)")
-parser.add_argument("-p", type=int, default=30, help="number of points when extracted randomly (default: 30)")
-parser.add_argument("-s", type=int, default=100, help="size of populations (default: 100)")
-parser.add_argument("-g", type=int, default=1000, help="number of generations (default: 700)")
-parser.add_argument("-e", type=int, default=30, help="number of elite individuals (default: 30)")
-# elite size better near 30%
-parser.add_argument("-m", type=float, default=0.005, help="mutation rate (default: 0.005)")
-# if it's 0, convergence is faster but increases probability to get stuck in local minima
-# over a certain value the algorithm could stop converging
-parser.add_argument("--test", default=False, action="store_true", help="stops the program when true distance is reached within a predefined error")
-parser.add_argument("-d", type=float, help="true distance, used if testing")
-parser.add_argument("-u", type=float, help="range of error allowed during testing")
-args = parser.parse_args()
+def main():
+    global p, data_path
+    parser = argparse.ArgumentParser(description="THE GREAT G.A.T.S.PY --- Genetic Algoritm for Travelling Salesman problem in PYthon")
+    parser.add_argument("--rand", default=False, action="store_true", help="extract points randomly (default: False)")
+    parser.add_argument("--file", default=None, help="takes initial path from file (.csv with cols index-x-y) (default: None)")
+    parser.add_argument("--save", default=False, action="store_true", help="saves pictures and best path data (default: False)")
+    parser.add_argument("-p", type=int, default=30, help="number of points when extracted randomly (default: 30)")
+    parser.add_argument("-s", type=int, default=100, help="size of populations (default: 100)")
+    parser.add_argument("-g", type=int, default=1000, help="number of generations (default: 700)")
+    parser.add_argument("-e", type=int, default=30, help="number of elite individuals (default: 30)")
+    # elite size better near 30%
+    parser.add_argument("-m", type=float, default=0.005, help="mutation rate (default: 0.005)")
+    # if it's 0, convergence is faster but increases probability to get stuck in local minima
+    # over a certain value the algorithm could stop converging
+    parser.add_argument("--test", default=False, action="store_true", help="stops the program when true distance is reached within a predefined error")
+    parser.add_argument("-d", type=float, help="true distance, used if testing")
+    parser.add_argument("-u", type=float, help="range of error allowed during testing")
+    args = parser.parse_args()
 
-if args.file != None:
-    df = pd.read_csv(args.file)
-    df.rename(columns={ df.columns[1]: "x", df.columns[2]: "y"})
-    initial_path = Path([])
-    for index, row in df.iterrows():
-        initial_path.append(Point(row.x, row.y))
-elif not args.rand:
-    initial_path = gui_choose_points(args.p)
-else:
-    rand_x, rand_y = np.random.rand(args.p,), np.random.rand(args.p,)
-    initial_path = Path([Point(x=rand_x[i], y=rand_y[i]) for i in range(args.p)])
+    if args.file != None:
+        df = pd.read_csv(args.file)
+        df.rename(columns={ df.columns[1]: "x", df.columns[2]: "y"})
+        initial_path = Path([])
+        for index, row in df.iterrows():
+            initial_path.append(Point(row.x, row.y))
+    elif not args.rand:
+        initial_path = gui_choose_points(args.p)
+    else:
+        rand_x, rand_y = np.random.rand(args.p,), np.random.rand(args.p,)
+        initial_path = Path([Point(x=rand_x[i], y=rand_y[i]) for i in range(args.p)])
 
-random.shuffle(initial_path)
-if args.save:
-    if not os.path.exists("data"):
-        os.makedirs("data")
-    data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
-    save_path_csv(initial_path, "initial_path.csv")
+    random.shuffle(initial_path)
+    if args.save:
+        if not os.path.exists("data"):
+            os.makedirs("data")
+        data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+        save_path_csv(initial_path, "initial_path.csv")
 
-#starting parallel code (lucky Carlo)
-usable_cpu = cpu_count(logical=False) -1 #for Ruben it's 1 :( POOR RUBEN !!1!
-initial_population = Population([initial_path] * int(args.s))
-manager = Manager()
-queue_list, return_queue_list = [manager.Queue()]*usable_cpu, [manager.Queue()]*usable_cpu
-evolve_args_partial_list = [initial_population, args, queue_list, return_queue_list]
+    #starting parallel code (lucky Carlo)
+    usable_cpu = cpu_count(logical=False) -1 #for Ruben it's 1 :( POOR RUBEN !!1!
+    initial_population = Population([initial_path] * int(args.s))
+    manager = Manager()
+    queue_list, return_queue_list = [manager.Queue()]*usable_cpu, [manager.Queue()]*usable_cpu
+    evolve_args_partial_list = [initial_population, args, queue_list, return_queue_list]
 
-stop_callback = lambda x: quit(args.test)
-p = Pool(usable_cpu)
-for i in range(usable_cpu):
-    p.apply_async(evolve, args=tuple(evolve_args_partial_list + [i]), callback=stop_callback, error_callback=error_callback)
-p.close()
-p.join()
-if not args.test:
-    final_path = Population([q.get() for q in return_queue_list]).rank_paths()[0]
-    print(final_path)
-    data = to_plot(final_path)
-    plt.plot(data[0], data[1])
-    plt.show()
+    stop_callback = lambda x: quit(args.test)
+    p = Pool(usable_cpu)
+    for i in range(usable_cpu):
+        p.apply_async(evolve, args=tuple(evolve_args_partial_list + [i]), callback=stop_callback, error_callback=error_callback)
+    p.close()
+    p.join()
+    if not args.test:
+        final_path = Population([q.get() for q in return_queue_list]).rank_paths()[0]
+        print(final_path)
+        data = to_plot(final_path)
+        plt.plot(data[0], data[1])
+        plt.show()
+
+if __name__ == "__main__":
+    main()
