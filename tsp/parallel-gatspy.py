@@ -8,10 +8,9 @@ import PySimpleGUI as sg
 import numpy as np
 import argparse
 import os
-
-if not os.path.exists("data"):
-    os.makedirs("data")
-data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+from multiprocessing import Pool, Queue, Manager
+from psutil import cpu_count
+import sys
 
 class Point:
     def __init__(self, x, y):
@@ -24,6 +23,11 @@ class Point:
         dist = np.sqrt((dx ** 2) + (dy ** 2))
         return dist
 
+    def __repr__(self):
+        return f"{self.x} {self.y}"
+        
+    def __eq__(self, p2):
+        return self.x == p2.x and self.y == p2.y
 
 class Path(list):
     @property
@@ -41,10 +45,9 @@ class Path(list):
     # returns child - ordered crossover;
     # gene taken from parent1 (self) is inserted within parent2 and remanining basis are shifted without changing the order
     def __and__(self, parent2):
-        ind1 = int(random.random() * len(self))
-        ind2 = int(random.random() * len(self))
-        start_ind, end_ind = min(ind1, ind2), max(ind1, ind2)
-        temp = self[start_ind : end_ind]
+        start_ind = int(random.random() * len(self))
+        shift = int(random.random() * (len(self)-start_ind))
+        temp = self[start_ind : start_ind + shift]
         child = temp + [item for item in parent2 if item not in temp]
         return self.__class__(child)
 
@@ -84,7 +87,7 @@ class Population(list):
         return self.__class__([path.mutate(mutation_rate) for path in self])
 
     def next_generation(self, elite_num, mutation_rate):
-        return self.rank_paths().select(elite_num).breed(elite_num).mutate(mutation_rate)
+        return self.select(elite_num).breed(elite_num).mutate(mutation_rate).rank_paths()
 
 def to_plot(path):
     return ([p.x for p in path] + [path[0].x], [p.y for p in path] + [path[0].y])
@@ -95,36 +98,26 @@ def save_path_csv(path, file_name):
         columns=["x", "y"]
     ).to_csv(os.path.join(data_path, file_name))
 
-def evolve(population, generations_num=700, elite_num=30, mutation_rate=0.005, to_save=True):
-    print(f"Initial distance: { - 1/population.rank_paths()[0].loss}")
-    distances = []
-    fig, ax = plt.subplots()
-    data = to_plot(population[0])
-    lines = ax.plot(data[0], data[1], marker="o")
-    fig.canvas.manager.show()
+def evolve(population, args, queue_list, return_queue_list, island_num):
+    elite_num, generations_num, mutation_rate = args.e, args.g, args.m
+    test, dist, error = args.test, args.d, args.u
+    immigrant_num = int(0.1 * len(population))
     for i in range(generations_num):
-        population = population.next_generation(elite_num, mutation_rate)
-        best_path = population.rank_paths()[0]
-        distances.append(best_path.loss)
-        print(f"Gen: {i} --- Loss: {best_path.loss}")
+        population = population.next_generation(elite_num, mutation_rate) #always ordered
         if i % 20 == 0:
-            data = to_plot(best_path)
-            lines[0].set_data(data[0], data[1])
-            fig.canvas.draw()
-            fig.canvas.flush_events()
-    if to_save:
-        plt.savefig(os.path.join(data_path, "final_path.png"))
-        save_path_csv(best_path, "final_path.csv")
-    plt.close()
-    plt.plot(range(len(distances)), distances)
-    plt.ylabel("Distance")
-    plt.xlabel("Generation")
-    plt.ion()
-    plt.show()
-    if to_save: plt.savefig(os.path.join(data_path, "progress.png"))
-    plt.pause(10)
-    print(f"Final distance: {- 1 / best_path.loss}")
-    return best_path
+            queue_list[island_num].put(population[:immigrant_num])
+            immigrant = queue_list[(island_num+1)%len(queue_list)].get() #provides sort of locking
+            population[:immigrant_num] = immigrant
+        best_path = population[0]
+        if not test:
+            print(f"Island {island_num} --- Gen: {i} --- Loss: {best_path.loss}", flush=True) #slows down
+        elif test and abs(best_path.loss - dist) < error:
+            print("CONVERGED", flush=True)
+            return
+
+
+
+    return_queue_list[island_num].put(best_path)
 
 def gui_choose_points(points_num):
     path = Path([])
@@ -153,28 +146,59 @@ def gui_choose_points(points_num):
     window.close()
     return path
 
+def quit(test, *args, **kwargs):
+    if test:
+        p.terminate()
+
+def error_callback(exception, *args, **kwargs):
+    print(exception, flush=True)
 
 parser = argparse.ArgumentParser(description="THE GREAT G.A.T.S.PY --- Genetic Algoritm for Travelling Salesman problem in PYthon")
 parser.add_argument("--rand", default=False, action="store_true", help="extract points randomly (default: False)")
+parser.add_argument("--file", default=None, help="takes initial path from file (.csv with cols index-x-y) (default: None)")
 parser.add_argument("--save", default=False, action="store_true", help="saves pictures and best path data (default: False)")
 parser.add_argument("-p", type=int, default=30, help="number of points when extracted randomly (default: 30)")
 parser.add_argument("-s", type=int, default=100, help="size of populations (default: 100)")
-parser.add_argument("-g", type=int, default=700, help="number of generations (default: 700)")
+parser.add_argument("-g", type=int, default=1000, help="number of generations (default: 700)")
 parser.add_argument("-e", type=int, default=30, help="number of elite individuals (default: 30)")
 # elite size better near 30%
 parser.add_argument("-m", type=float, default=0.005, help="mutation rate (default: 0.005)")
 # if it's 0, convergence is faster but increases probability to get stuck in local minima
 # over a certain value the algorithm could stop converging
+parser.add_argument("--test", default=False, action="store_true", help="stops the program when true distance is reached within a predefined error")
+parser.add_argument("-d", type=float, help="true distance, used if testing")
+parser.add_argument("-u", type=float, help="range of error allowed during testing")
 args = parser.parse_args()
 
-if not args.rand:
+if args.file != None:
+    df = pd.read_csv(args.file)
+    df.rename(columns={ df.columns[1]: "x", df.columns[2]: "y"})
+    initial_path = Path([])
+    for index, row in df.iterrows():
+        initial_path.append(Point(row.x, row.y))
+elif not args.rand:
     initial_path = gui_choose_points(args.p)
 else:
     rand_x, rand_y = np.random.rand(args.p,), np.random.rand(args.p,)
     initial_path = Path([Point(x=rand_x[i], y=rand_y[i]) for i in range(args.p)])
 
-if args.save: save_path_csv(initial_path, "initial_path.csv")
-initial_population = Population([initial_path] * args.s)
-evolve(initial_population, generations_num=args.g, elite_num=args.e, mutation_rate=args.m, to_save=args.save)
+random.shuffle(initial_path)
+if args.save: 
+    if not os.path.exists("data"):
+        os.makedirs("data")
+    data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+    save_path_csv(initial_path, "initial_path.csv")
 
+#starting parallel code (lucky Carlo)
+usable_cpu = cpu_count(logical=False) - 1 #for Ruben it's 1 :( POOR RUBEN !!1!
+initial_population = Population([initial_path] * int(args.s))
+manager = Manager()
+queue_list, return_queue_list = [manager.Queue()]*usable_cpu, [manager.Queue()]*usable_cpu
+evolve_args_partial_list = [initial_population, args, queue_list, return_queue_list]
 
+stop_callback = lambda x: quit(args.test)
+p = Pool(usable_cpu)
+for i in range(usable_cpu):
+    p.apply_async(evolve, args=tuple(evolve_args_partial_list + [i]), callback=stop_callback)
+p.close()
+p.join()
