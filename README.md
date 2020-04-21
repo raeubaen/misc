@@ -1,4 +1,4 @@
-# giagu
+
 Corso di Machine Learning (Sapienza)
 
 Lezione 3: Metodi di Ottimizzazione
