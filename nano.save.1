@@ -1,0 +1,42 @@
+immagine = np.reshape(immagine, (1,100,100,3))
+
+# e estraiamone le attivazioni
+activations = activation_model.predict(immagine)
+
+
+# grafichiamo gli output per il primo layer convoluzionale (è il layer numero 
+# 3 (dopo ReLU) nel nostro modello)
+
+first_layer_activation = activations[3]
+print(first_layer_activation.shape)
+
+k = 0
+plt.figure(figsize=(20, 5), frameon=False)
+
+for i in range(8):
+   for j in range(2):
+      ax = plt.subplot(2, 8, k + 1, sharex=ax)
+      plt.imshow(first_layer_activation[0, :, :, k], cmap='viridis') 
+      plt.axis("off")
+      plt.grid(False)
+      plt.title(layer_names[3])
+      k = k + 1
+
+# stessa cosa per il terzo layer convoluzionale (il 9 nella lista)
+# sono 32 filtri, per velocità e semplicità ne grafichiamo solo i primi 
+# 8)
+tird_layer_activation = activations[9]
+print(tird_layer_activation.shape)
+
+k = 0
+plt.figure(figsize=(20, 20), frameon=False)
+
+for i in range(8):
+    ax = plt.subplot(1, 8, k + 1, sharex=ax)
+    plt.imshow(tird_layer_activation[0, :, :, k], cmap='viridis') 
+    plt.axis("off")
+    plt.grid(False)
+    plt.title(layer_names[9])
+    k = k + 1
+
+
