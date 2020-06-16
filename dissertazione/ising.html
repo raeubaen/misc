@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GAN-generated Ising Configurations</title> 
+    <style>
+      html {
+        display: table;
+        margin: auto;
+        height: 100%;
+      }
+      body {
+        display: table-cell;
+        vertical-align: middle;
+        background-color: black;
+        text-align: center;
+        height: 100%;
+      }
+      p, a {
+	      color: white;
+      }
+      input {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body> 
+    <img src="831.svg" id="preloader"></img>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script> 
+    <script type="text/javascript">
+      get_model = (async function(){
+        m = await tf.loadLayersModel('https://raw.githubusercontent.com/raeubaen/ml/master/model.json');
+	    return m
+      })();
+
+      function get_small_canvas(temp_class){
+	      canvas = get_model.then(function(model){
+              rand = tf.randomNormal([1, 128])
+              values = tf.oneHot(temp_class, 10).dataSync();
+
+              arr = Array.from(values);
+              temp = tf.tensor2d(arr, [1, 10])
+
+              pred = model.predict([temp, rand])
+              pred2 = tf.stack([pred, pred, pred, tf.ones(pred.shape)], axis=3)
+              values = pred2.dataSync();
+              arr = Array.from(values);
+
+              var new_canvas = document.createElement('canvas');
+              var mc_ctx = new_canvas.getContext('2d');
+              new_canvas.width = 28;
+              new_canvas.height = 28;
+
+              var mc_imageData = mc_ctx.getImageData(0,0, 28, 28);
+              var mc_px_data = mc_imageData.data;
+
+              for ( var i = 0; i <= arr.length; i++ ) {
+                if (arr[i]>0)
+                  mc_px_data[i] = 255
+                else 
+                  mc_px_data[i] = 0;
+              }
+
+             mc_px_data = new Uint8ClampedArray(mc_px_data);
+             mc_imageData.data.set(mc_px_data);
+             mc_ctx.putImageData(mc_imageData, 0, 0);
+             if (Math.random() > 0.5){	
+                mc_ctx.globalCompositeOperation='difference';
+        		mc_ctx.fillStyle = "white";
+        		mc_ctx.globalAlpha = 1;  // alpha 0 = no effect 1 = full effect
+		        mc_ctx.fillRect(0, 0, new_canvas.width, new_canvas.height);
+             }
+            return new_canvas
+      	  });
+	      return canvas
+      }
+
+      function resizeTo(img, scale){
+
+        var widthScaled = img.width * scale;
+        var heightScaled = img.height * scale;
+
+        var orig = document.createElement('canvas');
+        orig.width = img.width;
+        orig.height = img.height;
+        var origCtx = orig.getContext('2d');
+        origCtx.drawImage(img, 0, 0);
+        var origPixels = origCtx.getImageData(0, 0, img.width, img.height);
+
+        var scaled = document.createElement('canvas');
+        scaled.setAttribute("id", "ising_canvas");
+        scaled.width = widthScaled;
+        scaled.height = heightScaled;
+        var scaledCtx = scaled.getContext('2d');
+        var scaledPixels = scaledCtx.getImageData( 0, 0, widthScaled, heightScaled );
+
+        for( var y = 0; y < heightScaled; y++ ) {
+          for( var x = 0; x < widthScaled; x++ ) {
+            var index = (Math.floor(y / scale) * img.width + Math.floor(x / scale)) * 4;
+            var indexScaled = (y * widthScaled + x) * 4;
+            scaledPixels.data[ indexScaled ] = origPixels.data[ index ];
+            scaledPixels.data[ indexScaled+1 ] = origPixels.data[ index+1 ];
+            scaledPixels.data[ indexScaled+2 ] = origPixels.data[ index+2 ];
+            scaledPixels.data[ indexScaled+3 ] = origPixels.data[ index+3 ];
+          }
+        }
+        scaledCtx.putImageData( scaledPixels, 0, 0 );
+        return scaled;
+      }
+      
+      function display(temp_class){
+	      canvas = get_small_canvas(temp_class)
+	      canvas.then(function(canvas){
+              res_canvas = resizeTo(canvas, 10);
+              old_canvas = document.getElementById("ising_canvas")
+    	      res_canvas.style.border = "2px solid red"
+              if (old_canvas !== null)
+                old_canvas.parentNode.replaceChild(res_canvas, old_canvas);
+              else
+                document.body.insertBefore(res_canvas, document.body.firstChild);
+              document.getElementById("preloader").style.display = "none"
+            });
+      }
+
+      display(4);
+
+      function update(){
+        input = document.getElementById("temp_class")
+	    temp_class = document.getElementById("temp_class").value
+	    if (temp_class == "")
+            return null
+        temp_class = parseInt(temp_class)
+        console.log(temp_class)
+	    if (temp_class < 0){
+    	  input.value = 0
+    	  temp_class = 0
+        }
+    	if (temp_class > 9){
+    	  temp_class = 9
+    	  input.value = 9
+        }
+        document.getElementById("temp_value").value = temp_class/2 + " - " + (temp_class+1)/2
+    	display(temp_class)
+      }
+            
+    </script>
+    <form>
+      <p>Temperature Class:</p>
+      <input type="number" id="temp_class" oninput='update();' value="4"></input>
+      <p>Temperature Range:</p>
+      <input type="text" id="temp_value" value="2 - 2.5"></input>
+    </form>
+    <p>Further Info:</p>
+    <a href="https://github.com/raeubaen/ml/blob/master/Ising-DCGAN.ipynb">https://github.com/raeubaen/ml/blob/master/Ising-DCGAN.ipynb</a>
+  </body>
+</html>
+

@@ -1,0 +1,72 @@
+\begin{thebibliography}{10}
+
+\bibitem{Kadanoff2009}
+Leo~P. Kadanoff.
+\newblock More is the same; phase transitions and mean field theories.
+\newblock {\em Journal of Statistical Physics}, 137(5):777, Sep 2009.
+
+\bibitem{stylegan}
+Tero Karras, Samuli Laine, and Timo Aila.
+\newblock A style-based generator architecture for generative adversarial
+  networks.
+\newblock {\em CoRR}, abs/1812.04948, 2018.
+
+\bibitem{Nash48}
+John~F. Nash.
+\newblock Equilibrium points in n-person games.
+\newblock {\em Proceedings of the National Academy of Sciences}, 36(1):48--49,
+  1950.
+
+\bibitem{manypathsgan}
+William Fedus, Mihaela Rosca, Balaji Lakshminarayanan, Andrew Dai, Shakir
+  Mohamed, and Ian Goodfellow.
+\newblock Many paths to equilibrium: Gans do not need to decrease a divergence
+  at every step.
+\newblock 2018.
+
+\bibitem{onsager}
+Lars Onsager.
+\newblock Crystal statistics. i. a two-dimensional model with an order-disorder
+  transition.
+\newblock {\em Phys. Rev.}, 65:117--149, Feb 1944.
+
+\bibitem{metropolis-hastings}
+Siddhartha Chib and Edward Greenberg.
+\newblock Understanding the metropolis-hastings algorithm.
+\newblock {\em The American Statistician}, 49(4):327--335, 1995.
+
+\bibitem{dwave}
+Zhengbing Bian, Fabi{\'a}n~A. Chudak, William~G. Macready, and Geordie Rose.
+\newblock The ising model : teaching an old problem new tricks.
+\newblock 2010.
+
+\bibitem{nphard}
+Michael~R. Garey and David~S. Johnson.
+\newblock {\em Computers and Intractability; A Guide to the Theory of
+  NP-Completeness}.
+\newblock USA, 1990.
+
+\bibitem{quantumannealing}
+Juexiao Su, Tianheng Tu, and Lei He.
+\newblock A quantum annealing approach for boolean satisfiability problem.
+\newblock In {\em Proceedings of the 53rd Annual Design Automation Conference},
+  DAC ’16, New York, NY, USA, 2016. Association for Computing Machinery.
+
+\bibitem{net2vis}
+Alex B{\"{a}}uerle and Timo Ropinski.
+\newblock Net2vis: Transforming deep convolutional networks into
+  publication-ready visualizations.
+\newblock {\em CoRR}, abs/1902.04394, 2019.
+
+\bibitem{adam}
+Diederik Kingma and Jimmy Ba.
+\newblock Adam: A method for stochastic optimization.
+\newblock {\em International Conference on Learning Representations}, 12 2014.
+
+\bibitem{reference}
+Zhaocheng Liu, Sean Rodrigues, and Wenshan Cai.
+\newblock Simulating the ising model with a deep convolutional generative
+  adversarial network.
+\newblock 10 2017.
+
+\end{thebibliography}

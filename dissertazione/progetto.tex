@@ -1,0 +1,224 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[italian]{babel}
+\usepackage{multicol}
+\usepackage[margin=2cm]{geometry}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{makeidx}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{wrapfig}
+\usepackage{hyperref}
+\usepackage{array}
+\usepackage{cite}
+\usepackage{enumitem}
+
+\begin{document}
+
+\title{Simulazione del modello di Ising attraverso una Deep Convolutional Generative Adversarial Network}
+\author{Ruben Gargiulo}
+\date{}
+\maketitle
+\thispagestyle{plain}
+\begin{abstract}
+Negli ultimi anni l'architettura delle CNN si è affermata tra i metodi più efficaci per rappresentare dati complessi, soprattutto se strutturati come immagini. Al contempo le GAN, assieme ad altri tipi di reti, hanno ampliato il potere delle reti neurali permettendo di generare nuovi campioni dei dataset di partenza.
+I modelli generativi formati da reti avversarie convoluzionali, detti DCGAN, uniscono questi due aspetti dando accesso a simulazioni fisiche sempre più realistiche. Uno dei punti vincenti di quest'approccio è che, una volta allenate le reti, la simulazione avviene in un tempo irrisorio rispetto a quello richiesto dai metodi più classici. In questo report discuterò dell'uso di una DCGAN per generare campioni 28x28 del modello di Ising, dato un certo range di temperatura.
+\end{abstract}
+%-------------------------------------------------
+\section{Introduzione}
+In fisica c'è una continua necessità di effettuare simulazioni numeriche. Esse possono porsi come veri e propri esperimenti virtuali, facilitando la comprensione dei fenomeni in studio, estendendo i limiti dei metodi sperimentali, consentendo di confutare alcune teorie o di formularne altre. Molto spesso le simulazioni permettono di studiare fenomeni che non hanno una soluzione analitica, come nel caso della prima simulazione fisica di grande dimensione, effettuata nell'ambito del progetto Manhattan. Per modellizzare il processo della detonazione nucleare, infatti, Fermi e i suoi collaboratori ne simularono il comportamento su grossi calcolatori analogici. In questa circostanza fu sviluppata da N. C. Metropolis l'algoritmo Monte Carlo, il metodo principe della simulazione fisica. A Metropolis dobbiamo anche l'invenzione dell'algoritmo più diffuso appartenente a questa classe (Metropolis-Hastings).
+Uno dei fenomeni più interessanti che normalmente si simula attraverso tale algoritmo è il ferromagnetismo. Esso è stato modellizzato per la prima volta, attraverso una catena di spin interagenti, da Ernst Ising, che non riscontrò transizioni di fase. In due e in tre dimensioni, al contrario, si osserva una transizione che corrisponde al passaggio dal ferromagnetismo al paramagnetismo dopo il superamento della temperatura di Curie: questo comportamento può essere osservato sperimentalmente anche con materiali di uso comune, come nel celebre Pendolo di Curie. Il modello di Ising, inoltre, ha avuto un'importanza storica nell'affermazione della meccanica statistica moderna.
+Già nel IV secolo a.C. Democrito notò che l'atomismo poteva spiegare i comportamenti discontinui della natura, ossia le transizioni di fase; egli pensava che piccoli cambiamenti nel comportamento della materia su scala atomica potevano provocare grandi modifiche nello stato macroscopico osservato. 
+Al contrario molti altri filosofi, la cui tesi si impose rimanendo dominante fino almeno al XIX secolo, erano convinti della natura continua della realtà (si ricordi il "Natura non facit saltus" di Leibniz).
+Quando nell'Ottocento le leggi chimiche dimostrarono chiaramente l'esistenza degli atomi, J.Maxwell e L. Boltzmann applicarono le leggi meccaniche alla dinamica degli atomi e scoprirono che derivandone il comportamento collettivo si ottenevano le leggi dei gas, fondando così la meccanica statistica. Non tutti gli studiosi condividevano a pieno quest'approccio: negli anni '30 alcuni critici
+(tra cui H. A. Kramers), basandosi sull'analiticità della funzione di partizione di un sistema finito, ne derivavano l'impossibilità di giustificare le transizioni di fase con la meccanica statistica. \cite{Kadanoff2009} Lo studio del modello di Ising, al contrario, mostrò che la convergenza al limite termodinamico è così veloce che anche per reticoli piccoli si osservano transizioni di fase molto ripide.
+Il modello di Ising in 2D ha una soluzione analitica proposta da Onsager (1948) e dimostrata da Yang (1952). Nonostante ciò, uno dei modi più affermati per visualizzare il modello e studiarne le proprietà è la simulazione numerica attraverso il metodo di Metropolis. Esso però richiede molte iterazioni, per ciascuna configurazione generata, per giungere all'equilibrio.
+Un metodo per velocizzare di molto la generazione di configurazioni del modello di Ising è quello di allenare una rete neurale a estrarre campioni da una distribuzione di probabilità che sia molto simile a quella voluta. Il sampling tramite la rete neurale già allenata, a differenza dell'algoritmo di Metropolis, non richiede nessuna iterazione, poiché avviene generando dei numeri random ed passandoli come argomento ad una funzione deterministica. Come tale, esso richiede una quantità sensibilmente minore di tempo e risorse di calcolo. Questa maggiore efficienza è dovuta al fatto che, con l'algoritmo di Metropolis, si ricostruisce ogni volta da capo la distribuzione voluta; al contrario, la rete apprende la distribuzione \textit{una tantum}. Per verificare le potenzialità di quest'approccio, ho sviluppato una  Deep Convolutional Generative Adversarial Network. Essa è formata da due reti convoluzionali contrapposte: una (detta discriminatrice) si allena a distinguere le configurazioni appartenenti al dataset da quelle generate dall'avversaria, l'altra (detta generatrice) si allena ad ingannare la rete discriminatrice. Effettuando, con alcuni accorgimenti, il training delle due reti, ho costruito una DCGAN che, data una classe (tra 10) di temperatura (corrispondente ad un intervallo di 0.5), genera configurazioni credibili del modello di Ising. Inoltre i campioni fake estratti non presentano alcuni difetti presenti nel dataset di partenza (generato con l'algoritmo di Metropolis), dovuti al basso numero di iterazioni.
+\section{Reti GAN}
+L'architettura GAN è uno degli sviluppi più promettenti del Deep Learning. Essa (assieme agli autoencoder) consente infatti di ampliare il paradigma più diffuso in quest'ambito, ossia l'usare reti neurali per analizzare dati complessi e effettuare previsioni, regressioni o classificazioni. A questo proposito, si può dire che la differenza tra una rete generativa ed una rete classica è simile alla differenza tra una persona capace di distinguere un quadro di Monet ed un artista in grado di riprodurne lo stile. Come a sottolinearne la portata, tali reti sono perfino entrate nel dibattito pubblico, a causa del fenomeno dei deepfake. Vi sono anche GAN, come quella sviluppata in questo progetto, che consentono di modificare alcuni parametri per generare campioni di un certo tipo. Un esempio di GAN di questo tipo è styleGAN\footnote{Si veda ad esempio: www.thispersondoesnotexist.com}, sviluppata da NVIDIA: essa consente di produrre immagini di volti umani di persone inesistenti, modificando parametri come il colore della pelle, il genere o l'età.\cite{stylegan}\\
+\subsection{Minimax GAN}
+La struttura di una GAN tradizionale è abbastanza semplice: vi sono due reti che "giocano" una alla volta, una contro l'altra. Una rete $D$ (detta discriminatrice) viene allenata a distinguere le configurazioni reali da quelle generate dall'avversaria; subito dopo l'altra (detta generatrice, $G$) viene allenata ad ingannare la rete discriminatrice. $D$ viene strutturata in modo da fornire la probabilità che un campione sia reale; $G$ invece viene costruita in modo da fornire, a partire da un set $z$ di numeri random con distribuzione $p_z$, un campione simile a quelli del dataset di partenza. Quindi $D$ viene allenata per massimizzare la probabilità $D(x)$ che i campioni reali $x$ vengano riconosciuti come reali e la probabilità $(1-D(G(z)))$ che i campioni fake $G(z)$ vengano riconosciuti come fake, mentre $G$ viene allenata in modo da minimizzare la probabilità $(1-D(G(z)))$ che i campioni fake vengano riconosciuti come tali.
+Il training avviene dunque secondo il seguente schema:
+\begin{itemize}
+\item Si selezionano N campioni reali $x$ (ossia un batch) e si estraggono N vettori random $z$
+\item Si genera un batch di campioni fake: $G(z_1), ..., G(z_N)$
+\item Si allena il discriminatore usando come loss function: 
+\begin{equation}
+\frac{1}{N}\sum_{i=1}^{N} [-\log(D(x_i)) - \log(1-D(G(z_i)))]
+\end{equation}
+\item Si allena il generatore usando come loss function: $\frac{1}{N}\sum_{i=1}^{N} [\log(1-D(z_i))]$
+\end{itemize}
+Per il discriminatore questo corrisponde a minimizzare la crossentropia tra la distribuzione "vera", che associa 1 ai campioni reali e 0 ai campioni fake, e la distribuzione "appresa" che è costituita dall'output del discriminatore stesso. Una interessante interpretazione di questo schema di training è legata alla teoria dei giochi. L'allenamento infatti si può intendere come un gioco non cooperativo di tipo minimax tra le due reti $D$ e $G$:
+\begin{equation}
+\min _{G}\max _{D}\mathbb {E} _{{\boldsymbol {x}}\sim p_{data}({\boldsymbol {x}})}[\log D({\boldsymbol {x}})]+\mathbb {E} _{{\boldsymbol {z}}\sim p_{\boldsymbol {z}}({\boldsymbol {z}})}[\log(1-D(G({\boldsymbol {z}})))]
+\end{equation}
+Se la struttura dei dati e delle due reti lo permette, l'obiettivo ideale del training di una GAN classica è raggiungere un equilibrio di Nash
+\cite{Nash48}, ossia un punto nel quale entrambe le reti si trovano in una configurazione di pesi dalla quale non hanno alcun vantaggio ad allontanarsi  \cite{manypathsgan}. A quel punto il discriminatore non è capace di distinguere i campioni reali da quelli fake e dà in output il $50\%$ di probabilità in entrambi i casi; le loss valgono quindi:
+\begin{align}
+D_{loss} = - \log(0.5) - \log(1 - 0.5) = \log(4) = 1.386\\
+G_{loss} = \log(1- 0.5) = - 0.693 
+\end{align}
+Va notato che molto spesso l'equilibrio non si raggiunge, se non in casi molto semplici, poiché ci si limita a aspettare che il comportamento delle reti diventi stabile e che il generatore crei campioni realistici.
+\subsection{Non-saturating GAN}
+\label{Non-saturating GAN}
+Nell'articolo originale di Goodfellow in cui si introdussero le GAN oltre alla loss di tipo minimax venne delineato un altro tipo di loss, che secondo gli autori possedeva migliori proprietà di convergenza.
+La differenza con la minimax consiste nel massimizzare (per il generatore) la probabilità che i campioni fake vengano riconosciuti come reali, piuttosto che minimizzare la probabilità che vengano classificati come irrealistici. Dunque 
+\begin{equation}
+G_{loss} = - \mathbb{E}_{z \sim p_z} \log(D(G(z))
+\end{equation}
+Uno dei motivi per cui si preferisce questa loss è che tende a saturare di meno quando i campioni fake sono molto poco realistici. Per chiarire quest'aspetto, si supponga che la distribuzione $p_{model}$ dei campioni fake e la distribuzione reale $p_{data}$ siano due gaussiane 1D centrate in punti diversi $m$ e $d$. La loss minimax del generatore diventa costante lontano da $d$, quindi il generatore non riesce ad apprendere nulla a causa dell'azzeramento dei gradienti. Con la non-saturating loss la situazione si inverte. 
+\begin{figure}[H]
+\includegraphics[scale=0.5]{non-saturating-GAN.png}
+\centering
+\caption{Confronto tra non-saturating e minimax loss nel caso gaussiano 1D \cite{manypathsgan}. Per l'output del discriminatore $D(x)$ si è supposto un andamento sigmoideo, dal quale si deduce il comportamento delle loss.}
+\end{figure}
+\section{Modello di Ising}
+Il modello di Ising consiste in un insieme di punti su un reticolo D-dimensionale. Per ogni punto $k$ c'è una variabile discreta $\sigma_k$ con valori $\lbrace-1, 1\rbrace$. Per ciascuna coppia di punti $i$ e $j$ c'è un termine di interazione $J_{ij}$. Inoltre al reticolo viene applicato un campo magnetico esterno $h_{k}$. L'energia di una data configurazione ha la forma:
+\begin{equation}
+H = - \sum_{i,j \text{ vicini}} J_{ij} \sigma_i \sigma_j - \sum_i h_i \sigma_i
+\end{equation}
+La prima somma si estende solo sulle coppie di punti vicini tra loro. Spesso, come nel nostro caso, il modello di Ising si analizza nell'ipotesi che non ci sia campo esterno e che l'interazione $J$ non vari con la posizione:
+\begin{equation}
+H = -J \sum_{i,j \text{ vicini}}  \sigma_i \sigma_j
+\end{equation}
+Il modello è stato introdotto per analizzare il comportamento ferromagnetico della materia, con $\sigma_{i}$ che rappresenta la proiezione dello spin su un asse. Nella forma semplificata, il ground state consiste in una configurazione con $\sigma$ tutti uguali. In due dimensioni, a causa delle fluttuazioni termiche, le configurazioni osservate presentano comportamenti diversi al variare della temperatura. Il modello è stato infatti storicamente il primo ad esibire una transizione di fase continua da situazioni ordinate a disordinate in corrispondenza di una precisa temperatura.
+In base alla temperatura, si distinguono:
+\begin{itemize}
+\item configurazioni ordinate, in cui gli spin sono quasi tutti uguali, a bassa temperatura
+\item configurazioni critiche, in cui gli spin tendono ad organizzarsi in cluster, a temperature vicine a quella critica
+\item configurazioni disordinate, in cui gli spin sono organizzati in modo random, similmente all'effetto neve, ad alta temperatura
+\end{itemize}
+Il parametro d'ordine che consente facilmente di analizzare la transizione è la magnetizzazione spontanea. Essa rappresenta la media di tutti i valori di spin e si calcola a partire dalla temperatura con la formula di Onsager \cite{onsager}:
+\begin{equation}
+|M|(\beta) = (1-\sinh(2\beta J)^{-4})^{1/8}
+\end{equation}
+\begin{figure}[H]
+\fbox{\includegraphics[scale=0.3]{ord.png}}
+\hspace{10pt}
+\fbox{\includegraphics[scale=0.3]{crit.png}}
+\hspace{10pt}
+\fbox{\includegraphics[scale=0.3]{disord.png}}
+\centering
+\caption{Configurazioni, rispettivamente, ordinate, critiche e disordinate del modello semplificato.}
+\end{figure}
+\subsection{Simulazione attraverso l'algoritmo di Metropolis}
+La probabilità di ciascuna configurazione di $N$ spin $\sigma = [\sigma_1, \sigma_2, ..., \sigma_N]$ è data dalla distribuzione di Boltzmann:
+\begin{equation}
+P_{\beta }(\sigma)={\frac {e^{-\beta H(\sigma )}}{\sum\limits_{\sigma} e^{-\beta H(\sigma )}}}
+\end{equation}
+Dunque il rapporto tra le probabilità di due configurazioni $\sigma_1$, $\sigma_2$ è:
+\begin{equation}
+\frac{P_{\beta }(\sigma_1)}{P_{\beta }(\sigma_2)} = e^{-\beta [H(\sigma_1) - H(\sigma_2)]}
+\end{equation}
+La simulazione tradizionale del modello di Ising avviene attraverso l'algoritmo di Metropolis su un reticolo bidimensionale $L \times L$.
+Esso consiste in una serie di modifiche progressive della configurazione, da quella iniziale a quella finale. Per ogni iterazione, partendo da una configurazione $A$ si determina casualmente un sito $k$ sul reticolo e si inverte $\sigma_k$, ottenendo una configurazione $B$. Se l'energia dopo l'inversione diminuisce si accetta la nuova configurazione $B$, altrimenti la si accetta con probabilità $e^{\beta (H_A - H_B)}$. Nel calcolo dell'energia, per evitare effetti di bordo si usano condizioni al bordo periodiche. Dopo un certo numero di iterazioni (che aumenta con la temperatura) si ottiene una configurazione di equilibrio. \cite{metropolis-hastings}
+\subsection{Approfondimento: applicazioni computazionali}
+Il modello di Ising, nella sua forma completa
+\begin{equation}
+H = - \sum_{i,j \text{ vicini}} J_{ij} \sigma_i \sigma_j - \sum_i h_i \sigma_i
+\end{equation}
+è uno dei modelli fisici più usati al di fuori del suo ambito. Si stima che nel periodo tra il 1969 al 1997, siano stati pubblicati più di 12,000 articoli dove si usava il modello di Ising per descrivere fenomeni in diversi campi, dall'intelligenza artificale alla zoologia. \cite{dwave}
+Un'interessante applicazione riguarda il calcolo booleano parallelo. Infatti a bassa temperatura, assegnata una matrice $J$ e un vettore $h$, le configurazioni che si osservano in natura sono quelle che corrispondono al minimo globale dell'energia. Si vede quindi che è come se la natura provvedesse autonomamente all'ottimizzazione dei valori $\sigma$ per minizzare $H$, che è un problema computazionalmente NP-hard \cite{nphard}, ossia molto dispendioso da calcolare. A questo punto si può introdurre un'analogia tra il calcolo di espressioni booleane e la minimizzazione di $H$. Trattando $\sigma=-1, 1$ come un valore booleano falso o vero, le tavole della verità per gli operatori logici possono essere codificate attraverso modelli di Ising, variando $J$ e $h$. Introducendo il concetto di soddisfacibilità booleana (SAT), che consiste nel determinare, data una espressione booleana, se esiste un qualche assegnamento di valori 1 e 0 tali da rendere l'intera espressione vera, un problema SAT si può rappresentare con un modello di Ising cosicchè un espressione è soddisfacibile solo se lo stato fondamentale del reticolo associato ha energia 0. Dunque un problema SAT, che è NP-hard, può essere risolto fisicamente codificandolo attraverso un reticolo di spin a bassa temperatura ed osservando lo stato fondamentale. In questo modo si risolve il problema attraverso un calcolo estremamente parallelo (quantum annealing).\cite{quantumannealing}
+\begin{table}[H]
+\begin{tabular}{l|l}
+Logic function & Ising function\\
+\hline
+$z = 0$        & 2$\sigma_z$                                                                                   \\
+$z = x \wedge y$    & $-\sigma_x - \sigma_y + 2\sigma_z - 2\sigma_x\sigma_z - 2\sigma_y\sigma_z + \sigma_x\sigma_y$ \\
+$z = x \wedge \lnot y$   & $-\sigma_x + \sigma_y + 2\sigma_z - 2\sigma_x\sigma_z + 2\sigma_y\sigma_z - \sigma_x\sigma_y$ \\
+$z = x$        & $-2\sigma_x\sigma_z$                                                                          \\
+$z = \lnot x \wedge y$   & $+\sigma_x - \sigma_y + 2\sigma_z + 2\sigma_x\sigma_z - 2\sigma_y\sigma_z - \sigma_x\sigma_y$ \\
+$ z = y$       & $-2\sigma_y\sigma_z$                                                                           \\
+$z = x \vee y $   & $\sigma_x + \sigma_y - 2\sigma_z - 2\sigma_x\sigma_z - 2\sigma_y\sigma_z + \sigma_x\sigma_y$  \\
+
+\end{tabular}
+\centering
+\caption{Esempi di associazione tra funzioni logiche e energia dei reticoli \cite{quantumannealing}}
+\end{table}
+\section{Sviluppo della DCGAN}
+\subsection{Dataset}
+Il dataset utilizzato per allenare le reti è stato fornito gentilmente del prof. S. Giagu. Esso è stato ottenuto con l'algoritmo di Metropolis e consiste in 10k configurazioni con temperatura da 0 a 5. Il dataset, a causa di una termalizzazione leggermente incompleta, presenta due caratteristiche che saranno processate in modo diverso dalla GAN. Come si vede in figura \ref{difetti} vi è infatti la ripetizione di un pattern nella prima riga di pixel di quasi tutte le configurazioni e la presenza, nelle configurazioni a bassa temperatura, di bande verticali di spin allineati, corrispondenti in totale all'1\% del dataset.
+\begin{figure}[H]
+\includegraphics[width=0.8\textwidth]{dataset.png}\\
+\includegraphics[width=0.8\textwidth]{difetti.png}
+\centering
+\caption{Visualizzazione delle suddette caratteristiche del dataset}
+\label{difetti}
+\end{figure}
+\subsection{Topologia delle reti}
+Come discriminatore ho usato una CNN, che prende in input le immagini da analizzare $I$ e la classe di temperatura $T$. Il vettore one-hot $T$ in input viene processato da un layer denso e trasformato in una matrice $M$ $(28\times28)$. Successivamente $I$ ed $M$ vengono concatenate ottenendo un'immagine $(28\times28\times2)$ a due canali, che viene passata al primo layer convoluzionale. L'output della rete, invece, è la probabilità che l'immagine in input sia reale e corrisponda alla temperatura indicata. 
+\begin{figure}[H]
+\includegraphics[width=0.6\textwidth]{dis.png}\\
+\includegraphics[width=0.9\textwidth]{legend.jpg}
+\centering
+\caption{Struttura del discriminatore e legenda dei layer utilizzati. In input vi sono un vettore di dimensione 10 (la temperatura in forma one-hot) e l'immagine da processare. Il grafico è stato generato tramite Net2Vis \cite{net2vis}}\end{figure}
+Come generatore ho utilizzato una CNN con layer deconvoluzionali, che aumentano la dimensione dell'immagine. L'input è costituito da un vettore random di 128 componenti concatenato al vettore one-hot della temperatura, e l'output (che ha la tangente iperbolica come funzione di attivazione, per dare valori vicini a -1 o 1) da un'immagine 28x28 in scala di grigi.
+\begin{figure}[H]
+\includegraphics[width=0.7\textwidth]{gen.png}
+\centering
+\caption{Struttura del generatore. In input vi sono un vettore di dimensione 10 ed il vettore random di dimensione 128.}
+\end{figure}
+Per aiutare la GAN a prendere decisioni in base alla temperatura, le configurazioni fake vengono date in input al discriminatore insieme alla loro classe di temperatura reale, calcolata da un apposita CNN, che chiameremo regressore. Essa viene allenata precedentemente rispetto alla GAN e presenta una test accuracy di circa il 65\% (poiché la temperatura può essere predetta in modo affidabile solo intorno alla temperatura critica).
+\begin{figure}[H]
+\includegraphics[width=0.8\textwidth]{reg.png}
+\centering
+\caption{Struttura del regressore.}
+\end{figure}
+\subsection{Training schedule}
+\subsubsection{Caso ideale}
+\label{Caso ideale}
+Il discriminatore $D$ è addestrato minimizzando la crossentropia tra le probabilità in output e le probabilità reali che gli vengono fornite come target. Le coppie di esempi (immagini, classe di temperatura) che gli vengono presentate sono:
+\begin{itemize}
+\item immagini reali e temperature corrispondenti, con target 1
+\item immagini reali e temperature non corrispondenti, con target 0
+\item immagini fake e temperature corrispondenti (calcolate tramite il regressore), con target 0
+\end{itemize}
+In realtà, per aggiungere stocasticità al training, alle label viene aggiunto un rumore uniforme con ampiezza 0.05.
+Il generatore $G$ invece viene addestrato massimizzando la probabilità che le configurazioni fake, associate alla temperatura in input, siano riconosciute come reali (cfr. \ref{Non-saturating GAN}).
+\subsubsection{Fasi del training}
+Sfortunatamente, utilizzare questa modalità di training dall'inizio fa sì che i gradienti si azzerino dopo poche epoche ed il training si fermi. Osservando il comportamento delle reti dopo questo collasso ho notato che il discriminatore classificava sempre come corrette le immagini reali, col risultato che il generatore smetteva subito di apprendere. Ho deciso quindi di allenare la GAN partendo dalla schedule tradizionale non-saturating (con l'aggiunta della temperatura) e complicandola progressivamente fino ad arrivare al caso ideale.
+Si distinguono tre fasi in base alle coppie di esempi presentate al discriminatore:
+\begin{enumerate}[label=\Alph*:]
+\item (immagini reali, temperature reali), con target 1;\\(immagini fake, temperature usate per generarle), con target 0
+\item (immagini reali, temperature reali), con target 1;\\(immagini reali, temperature random), con target 0;\\(immagini fake, temperature usate per generarle), con target 0
+\item cfr. \ref{Caso ideale}
+\end{enumerate}
+\newpage
+Ho quindi eseguito il training progressivamente con 300 epoche per ciascuna fase, batch size di 64 e usando come ottimizzatore Adam \cite{adam} (con $\eta=0.0002,\,\beta=0.5$, best-practice per le GAN alla Goodfellow).
+\subsection{Processing post-training}
+Per aumentare la variabilità dei campioni generati, ho aggiunto al generatore un layer subito prima dell'output che inverte casualmente tutti gli spin con probabilità 1/2. Inoltre ho inserito un layer finale che arrotonda gli output a -1 o 1.
+\section{Risultati}
+I campioni generati sono abbastanza soddisfacenti: graficamente, come si vede in figura, sono molto simili a quelli generati tramite Metropolis. 
+\begin{figure}[H]
+\includegraphics[width=0.9\textwidth]{ising.png}
+\centering
+\caption{100 diverse configurazioni generate dalla GAN. I campioni sulla stessa colonna corrispondono alla stessa classe di temperatura, che aumenta da sinistra a destra.}
+\end{figure}
+Inoltre, come si vede dalla distribuzione della magnetizzazione, la GAN non ha imparato a riprodurre le configurazioni a bande verticali, che erano una caratteristica anomala del dataset (cfr. fig. \ref{difetti}). Questo è probabilmente dovuto al fatto che, dovendo discriminare i campioni anche in base alla temperatura, le configurazioni a bande verticali (che hanno label di temperatura bassa o nulla, ma magnetizzazione piccola) sono percepite dalla rete come anomale.
+\newpage
+Come si vede dallo scatter plot in figura, che contiene 10k punti, la distribuzione della magnetizzazione in funzione della temperatura è molto simile all'originale, a parte per il fatto che non presenta i suddetti difetti a basse temperatura (cfr. fig. \ref{difetti}).
+\begin{figure}[H]
+\includegraphics[width=0.45\textwidth]{fakescatter.png}
+\includegraphics[width=0.45\textwidth]{origscatter.png}
+\centering
+\caption{Confronto tra campioni fake ed originali dello scatter plot con magnetizzazione vs. temperatura per 10k configurazioni.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=0.7\textwidth]{hist.png}
+\centering
+\caption{Confronto tra l'istogramma della magnetizzazione dei campioni fake e degli originali.}
+\end{figure}
+\section{Deployment in JS}
+Come demo della GAN sviluppata ho implementato una pagina HTML\footnote{\url{https://raeubaen.github.io/ising.html}} che genera a piacere configurazioni del modello di Ising per una data temperatura tramite il generatore. La generazione della configurazione avviene sulla macchina del client; ho infatti salvato il modello ed i pesi del generatore da Keras in Python ed implementato la predizione tramite TensorflowJS. 
+\newpage
+\nocite{reference}
+\bibliography{bib}{}
+\bibliographystyle{unsrt}
+\end{document}
