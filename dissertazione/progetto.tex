@@ -146,7 +146,7 @@ $z = x \vee y $   & $\sigma_x + \sigma_y - 2\sigma_z - 2\sigma_x\sigma_z - 2\sig
 \subsection{Dataset}
 Il dataset utilizzato per allenare le reti è stato fornito gentilmente del prof. S. Giagu. Esso è stato ottenuto con l'algoritmo di Metropolis e consiste in 10k configurazioni con temperatura da 0 a 5. Il dataset, a causa di una termalizzazione leggermente incompleta, presenta due caratteristiche che saranno processate in modo diverso dalla GAN. Come si vede in figura \ref{difetti} vi è infatti la ripetizione di un pattern nella prima riga di pixel di quasi tutte le configurazioni e la presenza, nelle configurazioni a bassa temperatura, di bande verticali di spin allineati, corrispondenti in totale all'1\% del dataset.
 \begin{figure}[H]
-\includegraphics[width=0.8\textwidth]{dataset.png}\\
+\includegraphics[width=0.7\textwidth]{dataset.png}\\
 \includegraphics[width=0.8\textwidth]{difetti.png}
 \centering
 \caption{Visualizzazione delle suddette caratteristiche del dataset}
@@ -197,11 +197,11 @@ Per aumentare la variabilità dei campioni generati, ho aggiunto al generatore u
 \section{Risultati}
 I campioni generati sono abbastanza soddisfacenti: graficamente, come si vede in figura, sono molto simili a quelli generati tramite Metropolis. 
 \begin{figure}[H]
-\includegraphics[width=0.9\textwidth]{ising.png}
+\includegraphics[width=0.9\textwidth]{fig.png}
 \centering
 \caption{100 diverse configurazioni generate dalla GAN. I campioni sulla stessa colonna corrispondono alla stessa classe di temperatura, che aumenta da sinistra a destra.}
 \end{figure}
-Inoltre, come si vede dalla distribuzione della magnetizzazione, la GAN non ha imparato a riprodurre le configurazioni a bande verticali, che erano una caratteristica anomala del dataset (cfr. fig. \ref{difetti}). Questo è probabilmente dovuto al fatto che, dovendo discriminare i campioni anche in base alla temperatura, le configurazioni a bande verticali (che hanno label di temperatura bassa o nulla, ma magnetizzazione piccola) sono percepite dalla rete come anomale.
+Inoltre, come si vede dalla distribuzione della magnetizzazione, la GAN non ha imparato a riprodurre le configurazioni a bande verticali, che erano una caratteristica anomala del dataset (cfr. fig. \ref{difetti}). Questo è probabilmente dovuto al fatto che, dovendo discriminare i campioni anche in base alla temperatura, le configurazioni a bande verticali (che hanno label di temperatura bassa o nulla, ma magnetizzazione piccola) sono percepite dalla rete come anomale. Purtroppo ciò non è avvenuto per il pattern sulla prima riga (cfr. fig. \ref{difetti}), che si ripresenta identico in tutte le configurazioni generate.
 \newpage
 Come si vede dallo scatter plot in figura, che contiene 10k punti, la distribuzione della magnetizzazione in funzione della temperatura è molto simile all'originale, a parte per il fatto che non presenta i suddetti difetti a basse temperatura (cfr. fig. \ref{difetti}).
 \begin{figure}[H]

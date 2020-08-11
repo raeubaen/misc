@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.6980) (preloaded format=pdflatex 2019.3.27)  12 JUN 2020 15:07
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.6980) (preloaded format=pdflatex 2019.3.27)  20 JUN 2020 19:00
 entering extended mode
 **./progetto.tex
 (progetto.tex
@@ -910,11 +910,11 @@ File: disord.png Graphic file (type png)
 Package pdftex.def Info: disord.png  used on input line 107.
 (pdftex.def)             Requested size: 84.31564pt x 84.31564pt.
 [3 <./non-saturating-GAN.png>] [4 <./ord.png> <./crit.png> <./disord.png>]
-<dataset.png, id=154, 904.37875pt x 272.01625pt>
+<dataset.png, id=154, 904.37875pt x 306.14375pt>
 File: dataset.png Graphic file (type png)
 <use dataset.png>
 Package pdftex.def Info: dataset.png  used on input line 149.
-(pdftex.def)             Requested size: 386.95897pt x 116.38776pt.
+(pdftex.def)             Requested size: 338.58632pt x 114.61209pt.
 <difetti.png, id=155, 1137.5298pt x 112.7412pt>
 File: difetti.png Graphic file (type png)
 <use difetti.png>
@@ -948,23 +948,23 @@ File: reg.png Graphic file (type png)
 Package pdftex.def Info: reg.png  used on input line 170.
 (pdftex.def)             Requested size: 386.95897pt x 56.61555pt.
  [6 <./gen.png> <./reg.png>]
-<ising.png, id=188, 576.1525pt x 563.10374pt>
-File: ising.png Graphic file (type png)
-<use ising.png>
-Package pdftex.def Info: ising.png  used on input line 200.
-(pdftex.def)             Requested size: 435.32422pt x 425.48013pt.
- [7 <./ising.png>]
-<fakescatter.png, id=199, 404.51125pt x 283.0575pt>
+<fig.png, id=188, 2302.5222pt x 2241.8154pt>
+File: fig.png Graphic file (type png)
+<use fig.png>
+Package pdftex.def Info: fig.png  used on input line 200.
+(pdftex.def)             Requested size: 435.32422pt x 423.8285pt.
+ [7 <./fig.png>]
+<fakescatter.png, id=200, 404.51125pt x 283.0575pt>
 File: fakescatter.png Graphic file (type png)
 <use fakescatter.png>
 Package pdftex.def Info: fakescatter.png  used on input line 208.
 (pdftex.def)             Requested size: 217.66211pt x 152.31319pt.
-<origscatter.png, id=200, 404.51125pt x 283.0575pt>
+<origscatter.png, id=201, 404.51125pt x 283.0575pt>
 File: origscatter.png Graphic file (type png)
 <use origscatter.png>
 Package pdftex.def Info: origscatter.png  used on input line 209.
 (pdftex.def)             Requested size: 217.66211pt x 152.31319pt.
-<hist.png, id=201, 402.50375pt x 265.99374pt>
+<hist.png, id=202, 402.50375pt x 265.99374pt>
 File: hist.png Graphic file (type png)
 <use hist.png>
 Package pdftex.def Info: hist.png  used on input line 214.
@@ -986,7 +986,7 @@ Package rerunfilecheck Info: File `progetto.out' has not changed.
  ) 
 Here is how much of TeX's memory you used:
  20341 strings out of 494865
- 353623 string characters out of 3178317
+ 353727 string characters out of 3178317
  515035 words of memory out of 3000000
  23625 multiletter control sequences out of 15000+200000
  611705 words of font info for 80 fonts, out of 3000000 for 9000
@@ -1017,9 +1017,9 @@ mfs/install/fonts/type1/public/lm/lmsy10.pfb></home/ruben/.miktex/texmfs/instal
 l/fonts/type1/public/lm/lmsy7.pfb></home/ruben/.miktex/texmfs/install/fonts/typ
 e1/public/lm/lmtt8.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/public/a
 msfonts/symbols/msbm10.pfb>
-Output written on progetto.pdf (9 pages, 841882 bytes).
+Output written on progetto.pdf (9 pages, 895076 bytes).
 PDF statistics:
- 315 PDF objects out of 1000 (max. 8388607)
+ 316 PDF objects out of 1000 (max. 8388607)
  65 named destinations out of 1000 (max. 500000)
  199 words of extra memory for PDF output out of 10000 (max. 10000000)
 

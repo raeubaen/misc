@@ -16,15 +16,43 @@
         height: 100%;
       }
       p, a {
-	      color: white;
+        color: white;
+        font-family: sans-serif;
       }
       input {
         text-align: center;
       }
+      #preloader {
+        margin-top: auto;
+        margin-left:auto;
+        margin-right:auto;
+        height: 284px;
+        width: 284px;
+        border-width: 2px;
+        border-style: solid;
+        border-color: red;
+      }
+      #wheel {
+        height: 80%;    
+      }
     </style>
   </head>
   <body> 
-    <img src="831.svg" id="preloader"></img>
+
+    <div id="preloader">
+    <p>Loading model and weights</p>
+    <img src="831.svg" id="wheel"></img>
+    </div>
+
+    <form>
+      <p>Temperature Class:</p>
+      <input type="number" id="temp_class" oninput='update();' value="4"></input>
+      <p>Temperature Range:</p>
+      <input type="text" id="temp_value" value="2 - 2.5"></input>
+    </form>
+    <p>Further Info:</p>
+    <a href="https://github.com/raeubaen/ml/blob/master/Ising-DCGAN.ipynb">https://github.com/raeubaen/ml/blob/master/Ising-DCGAN.ipynb</a>
+
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script> 
     <script type="text/javascript">
       get_model = (async function(){
@@ -143,14 +171,7 @@
       }
             
     </script>
-    <form>
-      <p>Temperature Class:</p>
-      <input type="number" id="temp_class" oninput='update();' value="4"></input>
-      <p>Temperature Range:</p>
-      <input type="text" id="temp_value" value="2 - 2.5"></input>
-    </form>
-    <p>Further Info:</p>
-    <a href="https://github.com/raeubaen/ml/blob/master/Ising-DCGAN.ipynb">https://github.com/raeubaen/ml/blob/master/Ising-DCGAN.ipynb</a>
   </body>
 </html>
+
 
