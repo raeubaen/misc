@@ -1,21 +1,21 @@
-\BOOKMARK [1][-]{section.1}{Introduzione}{}% 1
-\BOOKMARK [1][-]{section.2}{Modello di Ising}{}% 2
-\BOOKMARK [2][-]{subsection.2.1}{Simulazione attraverso l'algoritmo di Metropolis}{section.2}% 3
-\BOOKMARK [2][-]{subsection.2.2}{Approfondimento: applicazioni computazionali}{section.2}% 4
-\BOOKMARK [1][-]{section.3}{Deep Learning}{}% 5
-\BOOKMARK [2][-]{subsection.3.1}{Introduzione alle Reti Neurali}{section.3}% 6
-\BOOKMARK [2][-]{subsection.3.2}{Formalismo matematico}{section.3}% 7
-\BOOKMARK [2][-]{subsection.3.3}{Discesa lungo il gradiente}{section.3}% 8
-\BOOKMARK [2][-]{subsection.3.4}{Backpropagation}{section.3}% 9
-\BOOKMARK [1][-]{section.4}{Reti GAN}{}% 10
-\BOOKMARK [2][-]{subsection.4.1}{Minimax GAN}{section.4}% 11
-\BOOKMARK [2][-]{subsection.4.2}{Non-saturating GAN}{section.4}% 12
-\BOOKMARK [1][-]{section.5}{Sviluppo della DCGAN}{}% 13
-\BOOKMARK [2][-]{subsection.5.1}{Dataset}{section.5}% 14
-\BOOKMARK [2][-]{subsection.5.2}{Topologia delle reti}{section.5}% 15
-\BOOKMARK [2][-]{subsection.5.3}{Training schedule}{section.5}% 16
-\BOOKMARK [3][-]{subsubsection.5.3.1}{Caso ideale}{subsection.5.3}% 17
-\BOOKMARK [3][-]{subsubsection.5.3.2}{Fasi del training}{subsection.5.3}% 18
-\BOOKMARK [2][-]{subsection.5.4}{Processing post-training}{section.5}% 19
-\BOOKMARK [1][-]{section.6}{Risultati}{}% 20
-\BOOKMARK [1][-]{section.7}{Deployment in JS}{}% 21
+\BOOKMARK [0][-]{chapter.1}{Introduzione}{}% 1
+\BOOKMARK [0][-]{chapter.2}{Modello di Ising}{}% 2
+\BOOKMARK [1][-]{section.2.1}{Simulazione attraverso l'algoritmo di Metropolis}{chapter.2}% 3
+\BOOKMARK [1][-]{section.2.2}{Approfondimento: applicazioni computazionali}{chapter.2}% 4
+\BOOKMARK [0][-]{chapter.3}{Deep Learning}{}% 5
+\BOOKMARK [1][-]{section.3.1}{Introduzione alle Reti Neurali}{chapter.3}% 6
+\BOOKMARK [1][-]{section.3.2}{Formalismo matematico}{chapter.3}% 7
+\BOOKMARK [1][-]{section.3.3}{Discesa lungo il gradiente}{chapter.3}% 8
+\BOOKMARK [1][-]{section.3.4}{Backpropagation}{chapter.3}% 9
+\BOOKMARK [0][-]{chapter.4}{Reti GAN}{}% 10
+\BOOKMARK [1][-]{section.4.1}{Minimax GAN}{chapter.4}% 11
+\BOOKMARK [1][-]{section.4.2}{Non-saturating GAN}{chapter.4}% 12
+\BOOKMARK [0][-]{chapter.5}{Sviluppo della DCGAN}{}% 13
+\BOOKMARK [1][-]{section.5.1}{Dataset}{chapter.5}% 14
+\BOOKMARK [1][-]{section.5.2}{Topologia delle reti}{chapter.5}% 15
+\BOOKMARK [1][-]{section.5.3}{Training schedule}{chapter.5}% 16
+\BOOKMARK [2][-]{subsection.5.3.1}{Caso ideale}{section.5.3}% 17
+\BOOKMARK [2][-]{subsection.5.3.2}{Fasi del training}{section.5.3}% 18
+\BOOKMARK [1][-]{section.5.4}{Processing post-training}{chapter.5}% 19
+\BOOKMARK [0][-]{chapter.6}{Risultati}{}% 20
+\BOOKMARK [0][-]{chapter.7}{Deployment in JS}{}% 21

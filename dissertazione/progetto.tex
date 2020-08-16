@@ -1,16 +1,12 @@
-\documentclass[a4paper]{article}
+ \documentclass[Lau, noexaminfo, oneside]{sapthesis} %to print the book, twoside
 \usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage[italian]{babel}
 \usepackage{multicol}
-\usepackage[margin=3cm]{geometry}
 \usepackage{lipsum}
-\usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{imakeidx}
-\usepackage{graphicx}
 \usepackage[export]{adjustbox}
 \usepackage{float}
 \usepackage{subcaption}
@@ -20,24 +16,27 @@
 \usepackage{cite}
 \usepackage{enumitem}
 
-
-\begin{document}
-
 \title{Simulazione del modello di Ising attraverso una Deep Convolutional Generative Adversarial Network}
 \author{Ruben Gargiulo}
 \date{}
+\IDnumber{1824800}
+\course{Fisica}
+\courseorganizer{Facoltà di Scienze Matematiche, Fisiche e Naturali}
+\submitdate{2019/2020}
+\copyyear{2020}
+\advisor{S.Giagu}
+\authoremail{gargiulo.1824800@studenti.uniroma1.it}
+\begin{document}
+\frontmatter
 \maketitle
 
 \begin{abstract}
 Negli ultimi anni l'architettura delle CNN si è affermata tra i metodi più efficaci per rappresentare dati complessi, soprattutto se strutturati come immagini. Al contempo le GAN, assieme ad altri tipi di reti, hanno ampliato il potere delle reti neurali permettendo di generare nuovi campioni dei dataset di partenza.
 I modelli generativi formati da reti avversarie convoluzionali, detti DCGAN, uniscono questi due aspetti dando accesso a simulazioni fisiche sempre più realistiche. Uno dei punti vincenti di quest'approccio è che, una volta allenate le reti, la simulazione avviene in un tempo irrisorio rispetto a quello richiesto dai metodi più classici. In questo report discuterò dell'uso di una DCGAN per generare campioni 28x28 del modello di Ising, dato un certo range di temperatura.
 \end{abstract}
-\newpage
 \tableofcontents
-\newpage
-\thispagestyle{plain}
-%-------------------------------------------------
-\section{Introduzione}
+\mainmatter
+\chapter{Introduzione}
 In fisica c'è una continua necessità di effettuare simulazioni numeriche. Esse possono porsi come veri e propri esperimenti virtuali, facilitando la comprensione dei fenomeni in studio, estendendo i limiti dei metodi sperimentali, consentendo di confutare alcune teorie o di formularne altre. \\
 Molto spesso le simulazioni permettono di studiare fenomeni che non hanno una soluzione analitica, come nel caso della prima simulazione fisica di grande dimensione, effettuata nell'ambito del progetto Manhattan. Per modellizzare il processo della detonazione nucleare, infatti, Fermi e i suoi collaboratori ne simularono il comportamento su grossi calcolatori analogici. In questa circostanza fu sviluppata da N. C. Metropolis l'algoritmo Monte Carlo, il metodo principe della simulazione fisica. A Metropolis dobbiamo anche l'invenzione dell'algoritmo più diffuso appartenente a questa classe (Metropolis-Hastings).\\
 Uno dei fenomeni più interessanti che si simula attraverso tale algoritmo è il ferromagnetismo. Esso è stato modellizzato per la prima volta, attraverso una catena di spin interagenti, da Ernst Ising, che non riscontrò transizioni di fase. In due e in tre dimensioni, al contrario, si osserva una transizione che corrisponde al passaggio dal ferromagnetismo al paramagnetismo dopo il superamento della temperatura di Curie: questo comportamento può essere osservato sperimentalmente anche con materiali di uso comune, come nel celebre Pendolo di Curie. \\
@@ -50,7 +49,7 @@ Lo studio del modello di Ising, al contrario, mostrò che la convergenza al limi
 Il modello di Ising in 2D ha una soluzione analitica proposta da Onsager (1948) e dimostrata da Yang (1952). Nonostante ciò, uno dei modi più affermati per visualizzare il modello e studiarne le proprietà è la simulazione numerica attraverso il metodo di Metropolis. Esso però richiede molte iterazioni, per ciascuna configurazione generata, per giungere all'equilibrio. \\
 Un metodo per velocizzare di molto la generazione di configurazioni del modello di Ising è quello di allenare una rete neurale a estrarre campioni da una distribuzione di probabilità che sia molto simile a quella voluta. Il sampling tramite la rete neurale già allenata, a differenza dell'algoritmo di Metropolis, non richiede nessuna iterazione, poiché avviene generando dei numeri random e passandoli come argomento ad una funzione deterministica. Come tale, esso richiede una quantità sensibilmente minore di tempo e risorse di calcolo. Questa maggiore efficienza è dovuta al fatto che, con l'algoritmo di Metropolis, si ricostruisce ogni volta da capo la distribuzione voluta; al contrario, la rete apprende la distribuzione \textit{una tantum}. \\
 Per verificare le potenzialità di quest'approccio, ho sviluppato una  Deep Convolutional Generative Adversarial Network. Essa è formata da due reti convoluzionali contrapposte: una (denominata discriminatrice) si allena a distinguere le configurazioni appartenenti al dataset da quelle generate dall'avversaria, l'altra (detta generatrice) si allena ad ingannare la rete discriminatrice. Effettuando, con alcuni accorgimenti, il training delle due reti, ho costruito una DCGAN che, data una classe (tra 10) di temperatura (corrispondente ad un intervallo di 0.5), genera configurazioni credibili del modello di Ising. Inoltre i campioni fake estratti non presentano alcuni difetti presenti nel dataset di partenza (generato con l'algoritmo di Metropolis), dovuti al basso numero di iterazioni.
-\section{Modello di Ising}
+\chapter{Modello di Ising}
 Il modello di Ising consiste in un insieme di punti su un reticolo D-dimensionale. Per ogni punto $k$ c'è una variabile discreta $\sigma_k$ con valori $\lbrace-1, 1\rbrace$. Per ciascuna coppia di punti $i$ e $j$ c'è un termine di interazione $J_{ij}$. Inoltre al reticolo viene applicato un campo magnetico esterno $h_{k}$. L'energia di una data configurazione ha la forma:
 \begin{equation}
 H = - \sum_{i,j \text{ vicini}} J_{ij} \sigma_i \sigma_j - \sum_i h_i \sigma_i
@@ -79,7 +78,7 @@ Il parametro d'ordine che consente facilmente di analizzare la transizione è la
 \centering
 \caption{Configurazioni, rispettivamente, ordinate, critiche e disordinate del modello semplificato.}
 \end{figure}
-\subsection{Simulazione attraverso l'algoritmo di Metropolis}
+\section{Simulazione attraverso l'algoritmo di Metropolis}
 La probabilità di ciascuna configurazione di $N$ spin $\sigma = [\sigma_1, \sigma_2, ..., \sigma_N]$ è data dalla distribuzione di Boltzmann:
 \begin{equation}
 P_{\beta }(\sigma)={\frac {e^{-\beta H(\sigma )}}{\sum\limits_{\sigma} e^{-\beta H(\sigma )}}}
@@ -90,7 +89,7 @@ Dunque il rapporto tra le probabilità di due configurazioni $\sigma_1$, $\sigma
 \end{equation}
 La simulazione tradizionale del modello di Ising avviene attraverso l'algoritmo di Metropolis su un reticolo bidimensionale $L \times L$.
 Esso consiste in una serie di modifiche progressive della configurazione, da quella iniziale a quella finale. Per ogni iterazione, partendo da una configurazione $A$ si determina casualmente un sito $k$ sul reticolo e si inverte $\sigma_k$, ottenendo una configurazione $B$. Se l'energia dopo l'inversione diminuisce si accetta la nuova configurazione $B$, altrimenti la si accetta con probabilità $e^{\beta (H_A - H_B)}$. Nel calcolo dell'energia, per evitare effetti di bordo si usano condizioni al bordo periodiche. Dopo un certo numero di iterazioni (che aumenta con la temperatura) si ottiene una configurazione di equilibrio. \cite{metropolis-hastings}
-\subsection{Approfondimento: applicazioni computazionali}
+\section{Approfondimento: applicazioni computazionali}
 Il modello di Ising, nella sua forma completa
 \begin{equation}
 H = - \sum_{i,j \text{ vicini}} J_{ij} \sigma_i \sigma_j - \sum_i h_i \sigma_i
@@ -113,8 +112,8 @@ $z = x \vee y $   & $\sigma_x + \sigma_y - 2\sigma_z - 2\sigma_x\sigma_z - 2\sig
 \centering
 \caption{Esempi di associazione tra funzioni logiche e energia dei reticoli \cite{quantumannealing}}
 \end{table}
-\section{Deep Learning}
-\subsection{Introduzione alle Reti Neurali}
+\chapter{Deep Learning}
+\section{Introduzione alle Reti Neurali}
 Una rete neurale artificiale consiste in un insieme di unità di calcolo elementari dette neuroni, collegate da canali di trasmissione dell'informazione detti sinapsi.
 Il tipo di neurone più utilizzato è detto percettrone; esso è collegato da sinapsi a molteplici neuroni di input e ad un solo neurone di output. Rappresentando i valori in input come un vettore $x_{in}$ ed il valore in output come uno scalare $x_{out}$, l'uscita del percettrone corrisponde a:
 \begin{equation}
@@ -134,7 +133,7 @@ La ragione del successo delle reti di questo tipo risiede nel teorema di appross
 \caption{Schematizzazione tramite un grafo di una rete feedforward.}
 \end{figure}
 Il metodo standard per l'addestramento di queste reti consiste nel trovare, tramite discesa lungo il gradiente, i pesi e i bias che minimizzano una loss function, rappresentante la discrepanza tra gli output effettivi e quelli previsti.
-\subsection{Formalismo matematico}
+\section{Formalismo matematico}
 Denotiamo con $W_{jk}^l$ il peso sinaptico dal k-esimo neurone dello strato $l-1$ al j-esimo neurone dello strato $l$ e con $b^l_j$ il bias per il j-esimo neurone nello strato l-esimo, con funzione di attivazione $f^l$.
 L'output (detto anche attivazione) del neurone j-esimo dello strato l-esimo vale dunque:
 \begin{equation}
@@ -155,7 +154,7 @@ L'output $y$ di una rete neurale di tipo feedforward $x$ si può quindi scrivere
 \begin{equation}
 y = F^L (W^L F^{L-1}(W^{L-1} ... F^1 ( W^1 x ) ... ))
 \end{equation}
-\subsection{Discesa lungo il gradiente}
+\section{Discesa lungo il gradiente}
 L'algoritmo comunemente utilizzato per minimizzare la funzione di costo è la cosiddetta discesa lungo il gradiente. Essa è una procedura di ottimizzazione, pubblicata per la prima volta da Cauchy nel 1847, che consente di minimizzare funzioni differenziabili reali. La discesa consiste in un percorso a passi discreti sviluppato partendo da una posizione iniziale $\mathbf{w}_0$ nello spazio dei parametri e muovendosi ad ogni step con uno spostamento dato dal prodotto tra un parametro $\eta$ (detto learning rate) e l'opposto del gradiente della funzione di costo $C(\mathbf{w}, x)$ nel punto in cui ci si trova.
 La procedura può essere schematizzata dal seguente pseudocodice (nel caso privo di bias):
 \begin{align*}
@@ -180,7 +179,7 @@ Durante l'addestramento di reti neurali si preferisce utilizzare una versione mo
 \end{align*} 
 Tale metodo possiede maggiore stocasticità rispetto all'algoritmo naive e consente di ridurre la probabilità di intrappolamento all'interno di regioni di minimo locale durante la discesa.
 Nell'utilizzo reale si adottano metodi più sofisticati, che utilizzano anche i gradienti ai passi precedenti e variano il learning rate in modo da velocizzare il training (es. Adam, RMSProp, ed altri).
-\subsection{Backpropagation} 
+\section{Backpropagation} 
 La discesa lungo il gradiente non sarebbe praticabile a livello computazionale senza l'adozione della cosiddetta backpropagation. Essa consiste in una procedura per il calcolo dei gradienti della loss function rispetto ai pesi ed ai bias che riduce la complessità computazionale rispetto ad un approccio naive e consente di vettorizzare il codice relativo all'addestramento delle reti.\\
 Per schematizzare tale metodo definiamo delle quantità ausiliarie, che rappresentano, rispettivamente, l'input allo strato l-esimo ed il gradiente della loss function $C$ rispetto all'input allo strato l-esimo\footnote{Con il simbolo $\odot$ si indica il prodotto elemento per elemento tra due vettori.}:
 \begin{align}
@@ -212,9 +211,9 @@ Dunque le quantità $\delta^l$ possono essere calcolate in maniera ricorsiva men
 \item il prodotto elemento per elemento tra i due vettori ottenuti ai passi precedenti
 \end{itemize}
 Si vede dunque come la backpropagation semplifichi di molto la complessità e renda vettorizzabile il calcolo dei gradienti durante il training.\cite{nielsenneural}
-\section{Reti GAN}
+\chapter{Reti GAN}
 L'architettura GAN è uno degli sviluppi più promettenti del Deep Learning. Essa (assieme agli autoencoder) consente infatti di ampliare il paradigma più diffuso in quest'ambito, ossia l'usare reti neurali per analizzare dati complessi e effettuare previsioni, regressioni o classificazioni. A questo proposito, si può dire che la differenza tra una rete generativa ed una rete classica è simile alla differenza tra una persona capace di distinguere un quadro di Monet ed un artista in grado di riprodurne lo stile. Come a sottolinearne la portata, tali reti sono perfino entrate nel dibattito pubblico, a causa del fenomeno dei deepfake\footnote{Si veda ad esempio: \url{https://www.congress.gov/bill/116th-congress/senate-bill/2065}}. Vi sono anche GAN, come quella sviluppata per questa dissertazione, che consentono di modificare alcuuni parametri per generare campioni di un certo tipo. Un esempio di GAN di questo tipo è styleGAN\footnote{Si veda ad esempio: \url{www.thispersondoesnotexist.com}}, sviluppata da NVIDIA: essa consente di produrre immagini di volti umani di persone inesistenti, modificando parametri come il colore della pelle, il genere o l'età.\cite{stylegan}\\
-\subsection{Minimax GAN}
+\section{Minimax GAN}
 La struttura di una GAN tradizionale è abbastanza semplice: vi sono due reti che "giocano" una alla volta, una contro l'altra. Una rete $D$ (detta discriminatrice) viene allenata a distinguere le configurazioni reali da quelle generate dall'avversaria; subito dopo l'altra (detta generatrice, $G$) viene allenata ad ingannare la rete discriminatrice. $D$ viene strutturata in modo da fornire la probabilità che un campione sia reale; $G$ invece viene costruita in modo da fornire, a partire da un set $z$ di numeri random con distribuzione $p_z$, un campione simile a quelli del dataset di partenza. Quindi $D$ viene allenata per massimizzare la probabilità $D(x)$ che i campioni reali $x$ vengano riconosciuti come reali e la probabilità $(1-D(G(z)))$ che i campioni fake $G(z)$ vengano riconosciuti come fake, mentre $G$ viene allenata in modo da minimizzare la probabilità $(1-D(G(z)))$ che i campioni fake vengano riconosciuti come tali.
 Ogni step del training avviene dunque secondo il seguente schema:
 \begin{itemize}
@@ -237,7 +236,7 @@ D_{loss} = - \log(0.5) - \log(1 - 0.5) = \log(4) = 1.386\\
 G_{loss} = \log(1- 0.5) = - 0.693 
 \end{align}
 Va notato che molto spesso l'equilibrio non si raggiunge, se non in casi molto semplici, poiché ci si limita a aspettare che il comportamento delle reti diventi stabile e che il generatore crei campioni realistici.
-\subsection{Non-saturating GAN}
+\section{Non-saturating GAN}
 \label{Non-saturating GAN}
 Nell'articolo originale di Goodfellow\cite{goodfellowgan} in cui si introdussero le GAN oltre alla loss di tipo minimax venne delineato un altro tipo di loss, che secondo gli autori possedeva migliori proprietà di convergenza.
 La differenza con la minimax consiste nel massimizzare (per il generatore) la probabilità che i campioni fake vengano riconosciuti come reali, piuttosto che minimizzare la probabilità che vengano classificati come irrealistici. Dunque 
@@ -250,8 +249,8 @@ Uno dei motivi per cui si preferisce questa loss è che tende a saturare di meno
 \centering
 \caption{Confronto tra non-saturating e minimax loss nel caso gaussiano 1D \cite{manypathsgan}. Per l'output del discriminatore $D(x)$ si è supposto un andamento sigmoideo, dal quale si deduce il comportamento delle loss.}
 \end{figure}
-\section{Sviluppo della DCGAN}
-\subsection{Dataset}
+\chapter{Sviluppo della DCGAN}
+\section{Dataset}
 Il dataset utilizzato per allenare le reti è stato fornito gentilmente del prof. S. Giagu. Esso è stato ottenuto con l'algoritmo di Metropolis e consiste in 10k configurazioni con temperatura da 0 a 5. Il dataset, a causa di una termalizzazione leggermente incompleta, presenta due caratteristiche che saranno processate in modo diverso dalla GAN. Come si vede in figura \ref{difetti} vi è infatti la ripetizione di un pattern nella prima riga di pixel di quasi tutte le configurazioni e la presenza, nelle configurazioni a bassa temperatura, di bande verticali di spin allineati, corrispondenti in totale all'1\% del dataset.
 \begin{figure}[H]
 \includegraphics[width=0.7\textwidth]{dataset.png}\\
@@ -260,7 +259,7 @@ Il dataset utilizzato per allenare le reti è stato fornito gentilmente del prof
 \caption{Visualizzazione delle suddette caratteristiche del dataset}
 \label{difetti}
 \end{figure}
-\subsection{Topologia delle reti}
+\section{Topologia delle reti}
 Come discriminatore ho usato una rete convoluzionale\footnote{Anche detta CNN, da Convolutional Neural Network. Si veda: \url{https://www.deeplearningbook.org/contents/convnets.html}}, (anche detta che prende in input le immagini da analizzare $I$ e la classe di temperatura $T$. Il vettore one-hot\footnote{Un vettore one-hot è un versore con una sola componente uguale ad 1 e le altre pari a 0. Normalmente, come in questo caso, l'indice della componente pari ad 1 rappresenta un'indice di classe.} $T$ in input viene processato da un layer denso e trasformato in una matrice $M$ $(28\times28)$. Successivamente $I$ ed $M$ vengono concatenate ottenendo un'immagine $(28\times28\times2)$ a due canali, che viene passata al primo layer convoluzionale. L'output della rete, invece, è la probabilità che l'immagine in input sia reale e corrisponda alla temperatura indicata.
 \begin{figure}[H]
 \includegraphics[width=0.6\textwidth]{dis.png}\\
@@ -282,8 +281,8 @@ Per aiutare la GAN a prendere decisioni in base alla temperatura, le configurazi
 \centering
 \caption{Struttura del regressore.}
 \end{figure}
-\subsection{Training schedule}
-\subsubsection{Caso ideale}
+\section{Training schedule}
+\subsection{Caso ideale}
 \label{Caso ideale}
 Il discriminatore $D$ è addestrato minimizzando la crossentropia tra le probabilità in output e le probabilità reali che gli vengono fornite come target. Le coppie di esempi (immagini, classe di temperatura) che gli vengono presentate sono:
 \begin{itemize}
@@ -293,7 +292,7 @@ Il discriminatore $D$ è addestrato minimizzando la crossentropia tra le probabi
 \end{itemize}
 In realtà, per aggiungere stocasticità al training, alle label viene aggiunto un rumore uniforme con ampiezza 0.05.
 Il generatore $G$ invece viene addestrato massimizzando la probabilità che le configurazioni fake, associate alla temperatura in input, siano riconosciute come reali (cfr. \ref{Non-saturating GAN}).
-\subsubsection{Fasi del training}
+\subsection{Fasi del training}
 Sfortunatamente, utilizzare questa modalità di training dall'inizio fa sì che i gradienti si azzerino dopo poche epoche ed il training si fermi. Osservando il comportamento delle reti dopo questo collasso ho notato che il discriminatore classificava sempre come corrette le immagini reali, col risultato che il generatore smetteva subito di apprendere. Ho deciso quindi di allenare la GAN partendo dalla schedule tradizionale non-saturating (con l'aggiunta della temperatura) e complicandola progressivamente fino ad arrivare al caso ideale.
 Si distinguono tre fasi in base alle coppie di esempi presentate al discriminatore:
 \begin{enumerate}[label=\Alph*:]
@@ -302,9 +301,9 @@ Si distinguono tre fasi in base alle coppie di esempi presentate al discriminato
 \item cfr. \ref{Caso ideale}
 \end{enumerate}
 Ho quindi eseguito il training progressivamente con 300 epoche per ciascuna fase, batch size di 64 e usando come ottimizzatore Adam \cite{adam} (con $\eta=0.0002,\,\beta=0.5$, best-practice per le GAN alla Goodfellow).
-\subsection{Processing post-training}
+\section{Processing post-training}
 Per aumentare la variabilità dei campioni generati, ho aggiunto al generatore un layer subito prima dell'output che inverte casualmente tutti gli spin con probabilità 1/2. Inoltre ho inserito un layer finale che arrotonda gli output a -1 o 1.
-\section{Risultati}
+\chapter{Risultati}
 I campioni generati sono abbastanza soddisfacenti: graficamente, come si vede in figura, sono molto simili a quelli generati tramite Metropolis. 
 \begin{figure}[H]
 \includegraphics[width=0.9\textwidth]{fig.png}
@@ -324,7 +323,7 @@ Come si vede dallo scatter plot in figura, che contiene 10k punti, la distribuzi
 \centering
 \caption{Confronto tra l'istogramma della magnetizzazione dei campioni fake e degli originali.}
 \end{figure}
-\section{Deployment in JS}
+\chapter{Deployment in JS}
 Come demo della GAN sviluppata ho implementato una pagina HTML\footnote{\url{https://raeubaen.github.io/ising.html}} che genera a piacere configurazioni del modello di Ising per una data temperatura tramite il generatore. La generazione della configurazione avviene sulla macchina del client; ho infatti salvato il modello ed i pesi del generatore da Keras in Python ed implementato la predizione tramite TensorflowJS. 
 \newpage
 \nocite{reference}
