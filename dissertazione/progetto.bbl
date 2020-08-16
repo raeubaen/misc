@@ -21,17 +21,11 @@ Zhengbing Bian, Fabi{\'a}n~A. Chudak, William~G. Macready, and Geordie Rose.
 \newblock The ising model : teaching an old problem new tricks.
 \newblock 2010.
 
-\bibitem{nphard}
-Michael~R. Garey and David~S. Johnson.
-\newblock {\em Computers and Intractability; A Guide to the Theory of
-  NP-Completeness}.
-\newblock USA, 1990.
-
 \bibitem{quantumannealing}
 Juexiao Su, Tianheng Tu, and Lei He.
 \newblock A quantum annealing approach for boolean satisfiability problem.
-\newblock In {\em Proceedings of the 53rd Annual Design Automation Conference},
-  DAC ’16, New York, NY, USA, 2016. Association for Computing Machinery.
+\newblock In {\em Proceedings of the 53rd Annual Design Automation Conference}.
+  Association for Computing Machinery, 2016.
 
 \bibitem{nielsenneural}
 Michael~A. Nielsen.
@@ -49,18 +43,18 @@ John~F. Nash.
 \newblock {\em Proceedings of the National Academy of Sciences}, 36(1):48--49,
   1950.
 
+\bibitem{goodfellowgan}
+Ian~J. Goodfellow, Jean Pouget-Abadie, M.~Mirza, B.~Xu, David Warde-Farley,
+  Sherjil Ozair, Aaron~C. Courville, and Yoshua Bengio.
+\newblock Generative adversarial networks.
+\newblock {\em ArXiv}, abs/1406.2661, 2014.
+
 \bibitem{manypathsgan}
 William Fedus, Mihaela Rosca, Balaji Lakshminarayanan, Andrew Dai, Shakir
   Mohamed, and Ian Goodfellow.
 \newblock Many paths to equilibrium: Gans do not need to decrease a divergence
   at every step.
 \newblock 2018.
-
-\bibitem{goodfellowgan}
-Ian~J. Goodfellow, Jean Pouget-Abadie, M.~Mirza, B.~Xu, David Warde-Farley,
-  Sherjil Ozair, Aaron~C. Courville, and Yoshua Bengio.
-\newblock Generative adversarial networks.
-\newblock {\em ArXiv}, abs/1406.2661, 2014.
 
 \bibitem{net2vis}
 Alex B{\"{a}}uerle and Timo Ropinski.

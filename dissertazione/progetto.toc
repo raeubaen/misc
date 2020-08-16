@@ -2,16 +2,17 @@
 \babel@toc {italian}{}
 \contentsline {chapter}{\numberline {1}Introduzione}{1}{chapter.1}% 
 \contentsline {chapter}{\numberline {2}Modello di Ising}{3}{chapter.2}% 
-\contentsline {section}{\numberline {2.1}Simulazione attraverso l'algoritmo di Metropolis}{4}{section.2.1}% 
-\contentsline {section}{\numberline {2.2}Approfondimento: applicazioni computazionali}{4}{section.2.2}% 
+\contentsline {section}{\numberline {2.1}Approssimazione di campo medio}{4}{section.2.1}% 
+\contentsline {section}{\numberline {2.2}Simulazione attraverso l'algoritmo di Metropolis}{4}{section.2.2}% 
+\contentsline {section}{\numberline {2.3}Approfondimento: applicazioni computazionali}{4}{section.2.3}% 
 \contentsline {chapter}{\numberline {3}Deep Learning}{6}{chapter.3}% 
 \contentsline {section}{\numberline {3.1}Introduzione alle Reti Neurali}{6}{section.3.1}% 
 \contentsline {section}{\numberline {3.2}Formalismo matematico}{7}{section.3.2}% 
-\contentsline {section}{\numberline {3.3}Discesa lungo il gradiente}{7}{section.3.3}% 
+\contentsline {section}{\numberline {3.3}Discesa lungo il gradiente}{8}{section.3.3}% 
 \contentsline {section}{\numberline {3.4}Backpropagation}{8}{section.3.4}% 
-\contentsline {chapter}{\numberline {4}Reti GAN}{10}{chapter.4}% 
+\contentsline {chapter}{\numberline {4}Reti Generative Avversarie}{10}{chapter.4}% 
 \contentsline {section}{\numberline {4.1}Minimax GAN}{10}{section.4.1}% 
-\contentsline {section}{\numberline {4.2}Non-saturating GAN}{11}{section.4.2}% 
+\contentsline {section}{\numberline {4.2}Non-saturating GAN}{12}{section.4.2}% 
 \contentsline {chapter}{\numberline {5}Sviluppo della DCGAN}{13}{chapter.5}% 
 \contentsline {section}{\numberline {5.1}Dataset}{13}{section.5.1}% 
 \contentsline {section}{\numberline {5.2}Topologia delle reti}{13}{section.5.2}% 
@@ -19,5 +20,5 @@
 \contentsline {subsection}{\numberline {5.3.1}Caso ideale}{15}{subsection.5.3.1}% 
 \contentsline {subsection}{\numberline {5.3.2}Fasi del training}{15}{subsection.5.3.2}% 
 \contentsline {section}{\numberline {5.4}Processing post-training}{16}{section.5.4}% 
-\contentsline {chapter}{\numberline {6}Risultati}{17}{chapter.6}% 
-\contentsline {chapter}{\numberline {7}Deployment in JS}{19}{chapter.7}% 
+\contentsline {section}{\numberline {5.5}Risultati}{16}{section.5.5}% 
+\contentsline {section}{\numberline {5.6}Deployment in JS}{17}{section.5.6}% 
