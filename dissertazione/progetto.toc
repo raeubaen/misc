@@ -1,0 +1,23 @@
+\babel@toc {italian}{}
+\babel@toc {italian}{}
+\contentsline {section}{\numberline {1}Introduzione}{3}{section.1}% 
+\contentsline {section}{\numberline {2}Modello di Ising}{4}{section.2}% 
+\contentsline {subsection}{\numberline {2.1}Simulazione attraverso l'algoritmo di Metropolis}{4}{subsection.2.1}% 
+\contentsline {subsection}{\numberline {2.2}Approfondimento: applicazioni computazionali}{5}{subsection.2.2}% 
+\contentsline {section}{\numberline {3}Deep Learning}{5}{section.3}% 
+\contentsline {subsection}{\numberline {3.1}Introduzione alle Reti Neurali}{5}{subsection.3.1}% 
+\contentsline {subsection}{\numberline {3.2}Formalismo matematico}{6}{subsection.3.2}% 
+\contentsline {subsection}{\numberline {3.3}Discesa lungo il gradiente}{7}{subsection.3.3}% 
+\contentsline {subsection}{\numberline {3.4}Backpropagation}{7}{subsection.3.4}% 
+\contentsline {section}{\numberline {4}Reti GAN}{8}{section.4}% 
+\contentsline {subsection}{\numberline {4.1}Minimax GAN}{9}{subsection.4.1}% 
+\contentsline {subsection}{\numberline {4.2}Non-saturating GAN}{9}{subsection.4.2}% 
+\contentsline {section}{\numberline {5}Sviluppo della DCGAN}{10}{section.5}% 
+\contentsline {subsection}{\numberline {5.1}Dataset}{10}{subsection.5.1}% 
+\contentsline {subsection}{\numberline {5.2}Topologia delle reti}{11}{subsection.5.2}% 
+\contentsline {subsection}{\numberline {5.3}Training schedule}{12}{subsection.5.3}% 
+\contentsline {subsubsection}{\numberline {5.3.1}Caso ideale}{12}{subsubsection.5.3.1}% 
+\contentsline {subsubsection}{\numberline {5.3.2}Fasi del training}{12}{subsubsection.5.3.2}% 
+\contentsline {subsection}{\numberline {5.4}Processing post-training}{12}{subsection.5.4}% 
+\contentsline {section}{\numberline {6}Risultati}{12}{section.6}% 
+\contentsline {section}{\numberline {7}Deployment in JS}{14}{section.7}% 

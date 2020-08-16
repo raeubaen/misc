@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.6980) (preloaded format=pdflatex 2019.3.27)  20 JUN 2020 19:00
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.6980) (preloaded format=pdflatex 2019.3.27)  15 AUG 2020 21:04
 entering extended mode
 **./progetto.tex
 (progetto.tex
@@ -427,9 +427,24 @@ LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (/home/ruben/.miktex/texmfs/install/tex/latex/amsfonts/amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
 )
-(/home/ruben/.miktex/texmfs/install/tex/latex/base/makeidx.sty
-Package: makeidx 2014/09/29 v1.0m Standard LaTeX package
+(/home/ruben/.miktex/texmfs/install/tex/latex/imakeidx/imakeidx.sty
+Package: imakeidx 2016/10/15 v1.3e Package for typesetting indices in a synchro
+nous mode
+
+(/home/ruben/.miktex/texmfs/install/tex/latex/xkeyval/xkeyval.sty
+Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
+
+(/home/ruben/.miktex/texmfs/install/tex/generic/xkeyval/xkeyval.tex
+(/home/ruben/.miktex/texmfs/install/tex/generic/xkeyval/xkvutils.tex
+\XKV@toks=\toks23
+\XKV@tempa@toks=\toks24
 )
+\XKV@depth=\count274
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+))
+(/home/ruben/.miktex/texmfs/install/tex/generic/iftex/ifluatex.sty
+Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
+))
 (/home/ruben/.miktex/texmfs/install/tex/latex/graphics/graphicx.sty
 Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
 
@@ -453,17 +468,6 @@ File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
 (/home/ruben/.miktex/texmfs/install/tex/latex/adjustbox/adjustbox.sty
 Package: adjustbox 2019/01/04 v1.2 Adjusting TeX boxes (trim, clip, ...)
 
-(/home/ruben/.miktex/texmfs/install/tex/latex/xkeyval/xkeyval.sty
-Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
-
-(/home/ruben/.miktex/texmfs/install/tex/generic/xkeyval/xkeyval.tex
-(/home/ruben/.miktex/texmfs/install/tex/generic/xkeyval/xkvutils.tex
-\XKV@toks=\toks23
-\XKV@tempa@toks=\toks24
-)
-\XKV@depth=\count274
-File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
-))
 (/home/ruben/.miktex/texmfs/install/tex/latex/adjustbox/adjcalc.sty
 Package: adjcalc 2012/05/16 v1.1 Provides advanced setlength with multiple back
 -ends (calc, etex, pgfmath)
@@ -556,9 +560,6 @@ Package: pdftexcmds 2018/09/10 v0.29 Utility functions of pdfTeX for LuaTeX (HO
 
 (/home/ruben/.miktex/texmfs/install/tex/generic/oberdiek/infwarerr.sty
 Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
-)
-(/home/ruben/.miktex/texmfs/install/tex/generic/iftex/ifluatex.sty
-Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
 )
 Package pdftexcmds Info: LuaTeX not detected.
 Package pdftexcmds Info: \pdf@primitive is available.
@@ -705,26 +706,26 @@ Package: enumitem 2019/06/20 v3.9 Customized lists
 (progetto.aux)
 \openout1 = `progetto.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 23.
-LaTeX Font Info:    ... okay on input line 23.
-LaTeX Font Info:    Try loading font information for T1+lmr on input line 23.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Try loading font information for T1+lmr on input line 24.
  (/home/ruben/.miktex/texmfs/install/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Info: Redefining \it@ocap on input line 23.
-LaTeX Info: Redefining \it@ccap on input line 23.
+LaTeX Info: Redefining \it@ocap on input line 24.
+LaTeX Info: Redefining \it@ccap on input line 24.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -734,15 +735,15 @@ LaTeX Info: Redefining \it@ccap on input line 23.
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(56.9055pt, 483.69687pt, 56.9055pt)
-* v-part:(T,H,B)=(56.9055pt, 731.23584pt, 56.9055pt)
+* h-part:(L,W,R)=(85.35826pt, 426.79135pt, 85.35826pt)
+* v-part:(T,H,B)=(85.35826pt, 674.33032pt, 85.35826pt)
 * \paperwidth=597.50787pt
 * \paperheight=845.04684pt
-* \textwidth=483.69687pt
-* \textheight=731.23584pt
-* \oddsidemargin=-15.36449pt
-* \evensidemargin=-15.36449pt
-* \topmargin=-52.36449pt
+* \textwidth=426.79135pt
+* \textheight=674.33032pt
+* \oddsidemargin=13.08827pt
+* \evensidemargin=13.08827pt
+* \topmargin=-23.91173pt
 * \headheight=12.0pt
 * \headsep=25.0pt
 * \topskip=10.0pt
@@ -791,7 +792,7 @@ Package caption Info: hyperref package is loaded.
 Package caption Info: wrapfig package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \AtBeginShipoutBox=\box82
-Package hyperref Info: Link coloring OFF on input line 23.
+Package hyperref Info: Link coloring OFF on input line 24.
 
 (/home/ruben/.miktex/texmfs/install/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
@@ -804,222 +805,269 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count302
 )
-LaTeX Info: Redefining \ref on input line 23.
-LaTeX Info: Redefining \pageref on input line 23.
-LaTeX Info: Redefining \nameref on input line 23.
+LaTeX Info: Redefining \ref on input line 24.
+LaTeX Info: Redefining \pageref on input line 24.
+LaTeX Info: Redefining \nameref on input line 24.
 
 (progetto.out) (progetto.out)
 \@outlinefile=\write3
 \openout3 = `progetto.out'.
 
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 29.
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 30.
 
 (/home/ruben/.miktex/texmfs/install/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 29.
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 30.
 
 (/home/ruben/.miktex/texmfs/install/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 29.
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 30.
 
 
 (/home/ruben/.miktex/texmfs/install/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 29.
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 30.
 
 
 (/home/ruben/.miktex/texmfs/install/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 29.
+(Font)              <12> on input line 30.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 29.
+(Font)              <8> on input line 30.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 29.
-LaTeX Font Info:    Try loading font information for U+msa on input line 29.
+(Font)              <6> on input line 30.
+LaTeX Font Info:    Try loading font information for U+msa on input line 30.
 
 (/home/ruben/.miktex/texmfs/install/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 29.
+LaTeX Font Info:    Try loading font information for U+msb on input line 30.
 
 (/home/ruben/.miktex/texmfs/install/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) [1
+
+{/home/ruben/.miktex/texmfs/data/pdftex/config/pdftex.map}] (progetto.toc
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 5.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 5.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 5.
 )
-Overfull \hbox (2.79343pt too wide) in paragraph at lines 36--44
-\T1/lmr/m/n/10 sperimentali, consentendo di confutare alcune teorie o di formul
-arne altre. Molto spesso le simulazioni permettono
+\tf@toc=\write4
+\openout4 = `progetto.toc'.
+
+ [2]
+Overfull \hbox (3.98576pt too wide) in paragraph at lines 41--53
+\T1/lmr/m/n/10 basandosi sull'analiticità della funzione di partizione di un si
+stema finito, ritenevano fosse impossibile
  []
 
-[1
 
-{/home/ruben/.miktex/texmfs/data/pdftex/config/pdftex.map}]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 45.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 45.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 45.
-
-Underfull \hbox (badness 10000) in paragraph at lines 45--46
-
+Overfull \hbox (1.67218pt too wide) in paragraph at lines 41--53
+\T1/lmr/m/n/10 dall'avversaria, l'altra (detta generatrice) si allena ad ingann
+are la rete discriminatrice. Effettuando,
  []
 
-LaTeX Font Info:    Try loading font information for OMS+lmr on input line 50.
-(/home/ruben/.miktex/texmfs/install/tex/latex/lm/omslmr.fd
+[3]
+LaTeX Font Info:    Try loading font information for OMS+lmr on input line 65.
+ (/home/ruben/.miktex/texmfs/install/tex/latex/lm/omslmr.fd
 File: omslmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 50.
-
-Overfull \hbox (0.39633pt too wide) in paragraph at lines 58--59
-\T1/lmr/m/n/10 stesso. Una interessante interpretazione di questo schema di tra
-ining è legata alla teoria dei giochi. L'allenamento
- []
-
-[2]
-<non-saturating-GAN.png, id=112, 756.8275pt x 342.27875pt>
-File: non-saturating-GAN.png Graphic file (type png)
-<use non-saturating-GAN.png>
-Package pdftex.def Info: non-saturating-GAN.png  used on input line 78.
-(pdftex.def)             Requested size: 378.41283pt x 171.13895pt.
-
-Overfull \hbox (3.15137pt too wide) in paragraph at lines 90--94
-\T1/lmr/m/n/10 Il modello è stato introdotto per analizzare il comportamento fe
-rromagnetico della materia, con $\OML/lmm/m/it/10 []$ \T1/lmr/m/n/10 che rappr
-esenta
- []
-
-<ord.png, id=117, 281.05pt x 281.05pt>
+(Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 65.
+<ord.png, id=133, 281.05pt x 281.05pt>
 File: ord.png Graphic file (type png)
 <use ord.png>
-Package pdftex.def Info: ord.png  used on input line 103.
+Package pdftex.def Info: ord.png  used on input line 74.
 (pdftex.def)             Requested size: 84.31564pt x 84.31564pt.
-<crit.png, id=118, 281.05pt x 281.05pt>
+<crit.png, id=135, 281.05pt x 281.05pt>
 File: crit.png Graphic file (type png)
 <use crit.png>
-Package pdftex.def Info: crit.png  used on input line 105.
+Package pdftex.def Info: crit.png  used on input line 76.
 (pdftex.def)             Requested size: 84.31564pt x 84.31564pt.
-<disord.png, id=119, 281.05pt x 281.05pt>
+<disord.png, id=136, 281.05pt x 281.05pt>
 File: disord.png Graphic file (type png)
 <use disord.png>
-Package pdftex.def Info: disord.png  used on input line 107.
+Package pdftex.def Info: disord.png  used on input line 78.
 (pdftex.def)             Requested size: 84.31564pt x 84.31564pt.
-[3 <./non-saturating-GAN.png>] [4 <./ord.png> <./crit.png> <./disord.png>]
-<dataset.png, id=154, 904.37875pt x 306.14375pt>
-File: dataset.png Graphic file (type png)
-<use dataset.png>
-Package pdftex.def Info: dataset.png  used on input line 149.
-(pdftex.def)             Requested size: 338.58632pt x 114.61209pt.
-<difetti.png, id=155, 1137.5298pt x 112.7412pt>
-File: difetti.png Graphic file (type png)
-<use difetti.png>
-Package pdftex.def Info: difetti.png  used on input line 150.
-(pdftex.def)             Requested size: 386.95897pt x 38.35213pt.
-<dis.png, id=156, 651.8754pt x 244.2726pt>
-File: dis.png Graphic file (type png)
-<use dis.png>
-Package pdftex.def Info: dis.png  used on input line 158.
-(pdftex.def)             Requested size: 290.22107pt x 108.755pt.
-<legend.jpg, id=157, 773.7708pt x 61.1886pt>
-File: legend.jpg Graphic file (type jpg)
-<use legend.jpg>
-Package pdftex.def Info: legend.jpg  used on input line 159.
-(pdftex.def)             Requested size: 435.32422pt x 34.42502pt.
-<gen.png, id=160, 586.47105pt x 173.448pt>
-File: gen.png Graphic file (type png)
-<use gen.png>
-Package pdftex.def Info: gen.png  used on input line 164.
-(pdftex.def)             Requested size: 338.58632pt x 100.1341pt.
+ [4 <./ord.png> <./crit.png> <./disord.png>]
+<grafo.pdf, id=166, 178.6675pt x 127.47626pt>
+File: grafo.pdf Graphic file (type pdf)
+<use grafo.pdf>
+Package pdftex.def Info: grafo.pdf  used on input line 125.
+(pdftex.def)             Requested size: 128.0387pt x 91.35878pt.
+ [5]
+<information-10-00122-g002.png, id=179, 361.95226pt x 215.8464pt>
+File: information-10-00122-g002.png Graphic file (type png)
+<use information-10-00122-g002.png>
+Package pdftex.def Info: information-10-00122-g002.png  used on input line 132.
 
-Overfull \hbox (12.21689pt too wide) in paragraph at lines 162--167
-[]\T1/lmr/m/n/10 Come generatore ho utilizzato una CNN con layer deconvoluziona
-li, che aumentano la dimensione dell'immagine.
+(pdftex.def)             Requested size: 256.07741pt x 152.71187pt.
+
+Overfull \hbox (0.4577pt too wide) in paragraph at lines 129--135
+\T1/lmr/m/n/10 universale, che afferma che una rete feedforward completamente c
+onnessa con larghezza o profondità
  []
 
-[5 <./dataset.png> <./difetti.png> <./dis.png> <./legend.jpg>]
-<reg.png, id=172, 763.1712pt x 111.65715pt>
+[6 <./grafo.pdf> <./information-10-00122-g002.png>]
+Overfull \hbox (4.0973pt too wide) in paragraph at lines 168--170
+\T1/lmr/m/n/10 Durante l'addestramento di reti neurali si preferisce utilizzare
+ una versione modificata dell'algoritmo,
+ []
+
+
+Overfull \hbox (3.92024pt too wide) in paragraph at lines 180--183
+\T1/lmr/m/n/10 probabilità di intrappolamento all'interno di regioni di minimo 
+locale durante la discesa. Nell'utilizzo
+ []
+
+
+Overfull \hbox (9.18088pt too wide) in paragraph at lines 184--186
+\T1/lmr/m/n/10 Per schematizzare tale metodo definiamo delle quantità ausiliari
+e, che rappresentano, rispettivamente,
+ []
+
+[7]
+LaTeX Font Info:    Try loading font information for T1+lmtt on input line 216.
+
+ (/home/ruben/.miktex/texmfs/install/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+Underfull \hbox (badness 10000) in paragraph at lines 216--217
+
+ []
+
+[8]
+<non-saturating-GAN.png, id=232, 756.8275pt x 342.27875pt>
+File: non-saturating-GAN.png Graphic file (type png)
+<use non-saturating-GAN.png>
+Package pdftex.def Info: non-saturating-GAN.png  used on input line 249.
+(pdftex.def)             Requested size: 378.41283pt x 171.13895pt.
+ [9]
+<dataset.png, id=252, 904.37875pt x 306.14375pt>
+File: dataset.png Graphic file (type png)
+<use dataset.png>
+Package pdftex.def Info: dataset.png  used on input line 257.
+(pdftex.def)             Requested size: 298.75264pt x 101.13051pt.
+<difetti.png, id=253, 1137.5298pt x 112.7412pt>
+File: difetti.png Graphic file (type png)
+<use difetti.png>
+Package pdftex.def Info: difetti.png  used on input line 258.
+(pdftex.def)             Requested size: 341.43437pt x 33.83981pt.
+<dis.png, id=257, 651.8754pt x 244.2726pt>
+File: dis.png Graphic file (type png)
+<use dis.png>
+Package pdftex.def Info: dis.png  used on input line 266.
+(pdftex.def)             Requested size: 256.07741pt x 95.9592pt.
+<legend.jpg, id=258, 773.7708pt x 61.1886pt>
+File: legend.jpg Graphic file (type jpg)
+<use legend.jpg>
+Package pdftex.def Info: legend.jpg  used on input line 267.
+(pdftex.def)             Requested size: 384.1096pt x 30.3748pt.
+ [10 <./non-saturating-GAN.png> <./dataset.png> <./difetti.png>]
+<gen.png, id=273, 586.47105pt x 173.448pt>
+File: gen.png Graphic file (type png)
+<use gen.png>
+Package pdftex.def Info: gen.png  used on input line 275.
+(pdftex.def)             Requested size: 298.75264pt x 88.35408pt.
+
+Overfull \hbox (3.56767pt too wide) in paragraph at lines 273--278
+[]\T1/lmr/m/n/10 Come generatore ho utilizzato una CNN con layer deconvoluziona
+li, che aumentano la dimensione
+ []
+
+<reg.png, id=274, 763.1712pt x 111.65715pt>
 File: reg.png Graphic file (type png)
 <use reg.png>
-Package pdftex.def Info: reg.png  used on input line 170.
-(pdftex.def)             Requested size: 386.95897pt x 56.61555pt.
- [6 <./gen.png> <./reg.png>]
-<fig.png, id=188, 2302.5222pt x 2241.8154pt>
+Package pdftex.def Info: reg.png  used on input line 281.
+(pdftex.def)             Requested size: 341.43437pt x 49.9539pt.
+[11 <./dis.png> <./legend.jpg> <./gen.png>]
+Overfull \hbox (14.29152pt too wide) in paragraph at lines 297--299
+\T1/lmr/m/n/10 partendo dalla schedule tradizionale non-saturating (con l'aggiu
+nta della temperatura) e complicandola
+ []
+
+<fig.png, id=292, 2302.5222pt x 2241.8154pt>
 File: fig.png Graphic file (type png)
 <use fig.png>
-Package pdftex.def Info: fig.png  used on input line 200.
-(pdftex.def)             Requested size: 435.32422pt x 423.8285pt.
- [7 <./fig.png>]
-<fakescatter.png, id=200, 404.51125pt x 283.0575pt>
+Package pdftex.def Info: fig.png  used on input line 310.
+(pdftex.def)             Requested size: 384.1096pt x 373.95425pt.
+[12 <./reg.png>]
+<fakescatter.png, id=306, 404.51125pt x 283.0575pt>
 File: fakescatter.png Graphic file (type png)
 <use fakescatter.png>
-Package pdftex.def Info: fakescatter.png  used on input line 208.
-(pdftex.def)             Requested size: 217.66211pt x 152.31319pt.
-<origscatter.png, id=201, 404.51125pt x 283.0575pt>
+Package pdftex.def Info: fakescatter.png  used on input line 317.
+(pdftex.def)             Requested size: 192.0548pt x 134.39323pt.
+<origscatter.png, id=307, 404.51125pt x 283.0575pt>
 File: origscatter.png Graphic file (type png)
 <use origscatter.png>
-Package pdftex.def Info: origscatter.png  used on input line 209.
-(pdftex.def)             Requested size: 217.66211pt x 152.31319pt.
-<hist.png, id=202, 402.50375pt x 265.99374pt>
+Package pdftex.def Info: origscatter.png  used on input line 318.
+(pdftex.def)             Requested size: 192.0548pt x 134.39323pt.
+<hist.png, id=308, 402.50375pt x 265.99374pt>
 File: hist.png Graphic file (type png)
 <use hist.png>
-Package pdftex.def Info: hist.png  used on input line 214.
-(pdftex.def)             Requested size: 338.58632pt x 223.75385pt.
-LaTeX Font Info:    Try loading font information for T1+lmtt on input line 219.
-
-
-(/home/ruben/.miktex/texmfs/install/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [8 <./fakescatter.png> <./origscatter.png> <./hist.png>] (progetto.bbl)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 224.
- [9]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 224.
+Package pdftex.def Info: hist.png  used on input line 323.
+(pdftex.def)             Requested size: 298.75264pt x 197.42891pt.
+ [13 <./fig.png>] [14 <./fakescatter.png> <./origscatter.png> <./hist.png>] (pr
+ogetto.bbl)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 333.
+ [15]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 333.
  (progetto.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 224.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 224.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 333.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 333.
 Package rerunfilecheck Info: File `progetto.out' has not changed.
-(rerunfilecheck)             Checksum: 042E222D0E0F6759614528158F52A976;1025.
+(rerunfilecheck)             Checksum: 56AF65DC23483C8E1E33AA5C115F72C8;1366.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
  ) 
 Here is how much of TeX's memory you used:
- 20341 strings out of 494865
- 353727 string characters out of 3178317
- 515035 words of memory out of 3000000
- 23625 multiletter control sequences out of 15000+200000
- 611705 words of font info for 80 fonts, out of 3000000 for 9000
+ 20529 strings out of 494865
+ 356780 string characters out of 3178317
+ 516775 words of memory out of 3000000
+ 23769 multiletter control sequences out of 15000+200000
+ 623566 words of font info for 84 fonts, out of 3000000 for 9000
  0 hyphenation exceptions out of 8191
- 59i,9n,94p,1579b,365s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/home/ruben/.miktex/texmfs/install/fonts/enc/dvips/lm/lm-ec.enc}{/home/ruben
-/.miktex/texmfs/install/fonts/enc/dvips/lm/lm-rm.enc}{/home/ruben/.miktex/texmf
-s/install/fonts/enc/dvips/lm/lm-mathit.enc}{/home/ruben/.miktex/texmfs/install/
-fonts/enc/dvips/lm/lm-mathsy.enc}{/home/ruben/.miktex/texmfs/install/fonts/enc/
+ 59i,11n,94p,1496b,415s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/home/ruben/.miktex/texmfs/install/fonts/enc/dvips/lm/lm-mathit.enc}{/home/r
+uben/.miktex/texmfs/install/fonts/enc/dvips/lm/lm-ec.enc}{/home/ruben/.miktex/t
+exmfs/install/fonts/enc/dvips/lm/lm-mathsy.enc}{/home/ruben/.miktex/texmfs/inst
+all/fonts/enc/dvips/lm/lm-rm.enc}{/home/ruben/.miktex/texmfs/install/fonts/enc/
 dvips/lm/lm-mathex.enc}</home/ruben/.miktex/texmfs/install/fonts/type1/public/l
 m/lmbx10.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmbx12.p
-fb></home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmbx9.pfb></home/r
-uben/.miktex/texmfs/install/fonts/type1/public/lm/lmex10.pfb></home/ruben/.mikt
-ex/texmfs/install/fonts/type1/public/lm/lmmi10.pfb></home/ruben/.miktex/texmfs/
-install/fonts/type1/public/lm/lmmi5.pfb></home/ruben/.miktex/texmfs/install/fon
-ts/type1/public/lm/lmmi7.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/pu
-blic/lm/lmmib10.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/l
-mmib5.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmmib7.pfb>
-</home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmr10.pfb></home/rube
-n/.miktex/texmfs/install/fonts/type1/public/lm/lmr12.pfb></home/ruben/.miktex/t
-exmfs/install/fonts/type1/public/lm/lmr17.pfb></home/ruben/.miktex/texmfs/insta
-ll/fonts/type1/public/lm/lmr5.pfb></home/ruben/.miktex/texmfs/install/fonts/typ
-e1/public/lm/lmr6.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/public/lm
-/lmr7.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmr8.pfb></
-home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmr9.pfb></home/ruben/.
-miktex/texmfs/install/fonts/type1/public/lm/lmri10.pfb></home/ruben/.miktex/tex
-mfs/install/fonts/type1/public/lm/lmsy10.pfb></home/ruben/.miktex/texmfs/instal
-l/fonts/type1/public/lm/lmsy7.pfb></home/ruben/.miktex/texmfs/install/fonts/typ
-e1/public/lm/lmtt8.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/public/a
-msfonts/symbols/msbm10.pfb>
-Output written on progetto.pdf (9 pages, 895076 bytes).
+fb></home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmbx5.pfb></home/r
+uben/.miktex/texmfs/install/fonts/type1/public/lm/lmbx7.pfb></home/ruben/.mikte
+x/texmfs/install/fonts/type1/public/lm/lmbx9.pfb></home/ruben/.miktex/texmfs/in
+stall/fonts/type1/public/lm/lmex10.pfb></home/ruben/.miktex/texmfs/install/font
+s/type1/public/lm/lmmi10.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/pu
+blic/lm/lmmi5.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmm
+i7.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmmib10.pfb></
+home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmmib5.pfb></home/ruben
+/.miktex/texmfs/install/fonts/type1/public/lm/lmmib7.pfb></home/ruben/.miktex/t
+exmfs/install/fonts/type1/public/lm/lmr10.pfb></home/ruben/.miktex/texmfs/insta
+ll/fonts/type1/public/lm/lmr12.pfb></home/ruben/.miktex/texmfs/install/fonts/ty
+pe1/public/lm/lmr17.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/public/
+lm/lmr5.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmr6.pfb>
+</home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmr7.pfb></home/ruben
+/.miktex/texmfs/install/fonts/type1/public/lm/lmr8.pfb></home/ruben/.miktex/tex
+mfs/install/fonts/type1/public/lm/lmr9.pfb></home/ruben/.miktex/texmfs/install/
+fonts/type1/public/lm/lmri10.pfb></home/ruben/.miktex/texmfs/install/fonts/type
+1/public/lm/lmsy10.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/public/l
+m/lmsy7.pfb></home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmsy8.pfb
+></home/ruben/.miktex/texmfs/install/fonts/type1/public/lm/lmtt8.pfb></home/rub
+en/.miktex/texmfs/install/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on progetto.pdf (15 pages, 1700229 bytes).
 PDF statistics:
- 316 PDF objects out of 1000 (max. 8388607)
- 65 named destinations out of 1000 (max. 500000)
- 199 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 445 PDF objects out of 1000 (max. 8388607)
+ 99 named destinations out of 1000 (max. 500000)
+ 249 words of extra memory for PDF output out of 10000 (max. 10000000)
 

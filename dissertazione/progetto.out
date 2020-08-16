@@ -1,16 +1,21 @@
 \BOOKMARK [1][-]{section.1}{Introduzione}{}% 1
-\BOOKMARK [1][-]{section.2}{Reti GAN}{}% 2
-\BOOKMARK [2][-]{subsection.2.1}{Minimax GAN}{section.2}% 3
-\BOOKMARK [2][-]{subsection.2.2}{Non-saturating GAN}{section.2}% 4
-\BOOKMARK [1][-]{section.3}{Modello di Ising}{}% 5
-\BOOKMARK [2][-]{subsection.3.1}{Simulazione attraverso l'algoritmo di Metropolis}{section.3}% 6
-\BOOKMARK [2][-]{subsection.3.2}{Approfondimento: applicazioni computazionali}{section.3}% 7
-\BOOKMARK [1][-]{section.4}{Sviluppo della DCGAN}{}% 8
-\BOOKMARK [2][-]{subsection.4.1}{Dataset}{section.4}% 9
-\BOOKMARK [2][-]{subsection.4.2}{Topologia delle reti}{section.4}% 10
-\BOOKMARK [2][-]{subsection.4.3}{Training schedule}{section.4}% 11
-\BOOKMARK [3][-]{subsubsection.4.3.1}{Caso ideale}{subsection.4.3}% 12
-\BOOKMARK [3][-]{subsubsection.4.3.2}{Fasi del training}{subsection.4.3}% 13
-\BOOKMARK [2][-]{subsection.4.4}{Processing post-training}{section.4}% 14
-\BOOKMARK [1][-]{section.5}{Risultati}{}% 15
-\BOOKMARK [1][-]{section.6}{Deployment in JS}{}% 16
+\BOOKMARK [1][-]{section.2}{Modello di Ising}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Simulazione attraverso l'algoritmo di Metropolis}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Approfondimento: applicazioni computazionali}{section.2}% 4
+\BOOKMARK [1][-]{section.3}{Deep Learning}{}% 5
+\BOOKMARK [2][-]{subsection.3.1}{Introduzione alle Reti Neurali}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.2}{Formalismo matematico}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.3}{Discesa lungo il gradiente}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.4}{Backpropagation}{section.3}% 9
+\BOOKMARK [1][-]{section.4}{Reti GAN}{}% 10
+\BOOKMARK [2][-]{subsection.4.1}{Minimax GAN}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.2}{Non-saturating GAN}{section.4}% 12
+\BOOKMARK [1][-]{section.5}{Sviluppo della DCGAN}{}% 13
+\BOOKMARK [2][-]{subsection.5.1}{Dataset}{section.5}% 14
+\BOOKMARK [2][-]{subsection.5.2}{Topologia delle reti}{section.5}% 15
+\BOOKMARK [2][-]{subsection.5.3}{Training schedule}{section.5}% 16
+\BOOKMARK [3][-]{subsubsection.5.3.1}{Caso ideale}{subsection.5.3}% 17
+\BOOKMARK [3][-]{subsubsection.5.3.2}{Fasi del training}{subsection.5.3}% 18
+\BOOKMARK [2][-]{subsection.5.4}{Processing post-training}{section.5}% 19
+\BOOKMARK [1][-]{section.6}{Risultati}{}% 20
+\BOOKMARK [1][-]{section.7}{Deployment in JS}{}% 21

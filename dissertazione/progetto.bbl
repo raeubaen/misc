@@ -5,25 +5,6 @@ Leo~P. Kadanoff.
 \newblock More is the same; phase transitions and mean field theories.
 \newblock {\em Journal of Statistical Physics}, 137(5):777, Sep 2009.
 
-\bibitem{stylegan}
-Tero Karras, Samuli Laine, and Timo Aila.
-\newblock A style-based generator architecture for generative adversarial
-  networks.
-\newblock {\em CoRR}, abs/1812.04948, 2018.
-
-\bibitem{Nash48}
-John~F. Nash.
-\newblock Equilibrium points in n-person games.
-\newblock {\em Proceedings of the National Academy of Sciences}, 36(1):48--49,
-  1950.
-
-\bibitem{manypathsgan}
-William Fedus, Mihaela Rosca, Balaji Lakshminarayanan, Andrew Dai, Shakir
-  Mohamed, and Ian Goodfellow.
-\newblock Many paths to equilibrium: Gans do not need to decrease a divergence
-  at every step.
-\newblock 2018.
-
 \bibitem{onsager}
 Lars Onsager.
 \newblock Crystal statistics. i. a two-dimensional model with an order-disorder
@@ -51,6 +32,35 @@ Juexiao Su, Tianheng Tu, and Lei He.
 \newblock A quantum annealing approach for boolean satisfiability problem.
 \newblock In {\em Proceedings of the 53rd Annual Design Automation Conference},
   DAC ’16, New York, NY, USA, 2016. Association for Computing Machinery.
+
+\bibitem{nielsenneural}
+Michael~A. Nielsen.
+\newblock Neural networks and deep learning, 2018.
+
+\bibitem{stylegan}
+Tero Karras, Samuli Laine, and Timo Aila.
+\newblock A style-based generator architecture for generative adversarial
+  networks.
+\newblock {\em CoRR}, abs/1812.04948, 2018.
+
+\bibitem{Nash48}
+John~F. Nash.
+\newblock Equilibrium points in n-person games.
+\newblock {\em Proceedings of the National Academy of Sciences}, 36(1):48--49,
+  1950.
+
+\bibitem{manypathsgan}
+William Fedus, Mihaela Rosca, Balaji Lakshminarayanan, Andrew Dai, Shakir
+  Mohamed, and Ian Goodfellow.
+\newblock Many paths to equilibrium: Gans do not need to decrease a divergence
+  at every step.
+\newblock 2018.
+
+\bibitem{goodfellowgan}
+Ian~J. Goodfellow, Jean Pouget-Abadie, M.~Mirza, B.~Xu, David Warde-Farley,
+  Sherjil Ozair, Aaron~C. Courville, and Yoshua Bengio.
+\newblock Generative adversarial networks.
+\newblock {\em ArXiv}, abs/1406.2661, 2014.
 
 \bibitem{net2vis}
 Alex B{\"{a}}uerle and Timo Ropinski.
