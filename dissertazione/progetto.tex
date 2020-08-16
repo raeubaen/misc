@@ -41,11 +41,12 @@ Quando nell'Ottocento le leggi chimiche dimostrarono chiaramente l'esistenza deg
 Lo studio del modello di Ising, al contrario, mostrò che la convergenza al limite termodinamico è così veloce che anche per reticoli piccoli si osservano transizioni di fase molto ripide.\\
 Il modello di Ising in 2D ha una soluzione analitica proposta da Onsager (1948) e dimostrata da Yang (1952). Nonostante ciò, uno dei modi più affermati per visualizzare il modello e studiarne le proprietà è la simulazione numerica attraverso il metodo di Metropolis; esso però richiede molte iterazioni, per ciascuna configurazione generata, per giungere all'equilibrio. \\
 Un metodo per velocizzare di molto la generazione di configurazioni del modello di Ising è quello di allenare una rete neurale a estrarre campioni da una distribuzione di probabilità che sia molto simile a quella voluta. Il sampling tramite la rete neurale già allenata, a differenza dell'algoritmo di Metropolis, non richiede nessuna iterazione. Esso infatti avviene generando dei numeri random e passandoli come argomento ad una funzione deterministica. Come tale, esso richiede una quantità sensibilmente minore di tempo e risorse di calcolo. Questa maggiore efficienza è dovuta al fatto che, con l'algoritmo di Metropolis, si ricostruisce ogni volta da capo la distribuzione voluta; al contrario, la rete apprende la distribuzione \textit{una tantum}. \\
-Per verificare le potenzialità di quest'approccio, ho sviluppato una Deep Convolutional Generative Adversarial Network. Essa è formata da due reti neurali convoluzionali contrapposte: una (denominata discriminatrice) si allena a distinguere le configurazioni appartenenti al dataset da quelle generate dall'avversaria, l'altra (detta generatrice) si allena ad ingannare la rete discriminatrice. Effettuando, con alcuni accorgimenti, il training delle due reti, ho costruito una DCGAN che, data una classe (tra 10) di temperatura (corrispondente ad un intervallo di 0.5), genera configurazioni credibili del modello di Ising. Inoltre i campioni fake estratti non presentano alcuni difetti presenti nel dataset di partenza (generato con l'algoritmo di Metropolis), dovuti al basso numero di iterazioni.
+Per verificare le potenzialità di quest'approccio, ho sviluppato una Deep Convolutional Generative Adversarial Network. Essa è formata da due reti neurali convoluzionali contrapposte: una (denominata discriminatrice) si allena a distinguere le configurazioni appartenenti al dataset da quelle generate dall'avversaria, l'altra (detta generatrice) si allena ad ingannare la rete discriminatrice. Effettuando, con alcuni accorgimenti, il training delle due reti, ho costruito una DCGAN che, data una classe (tra 10) di temperatura genera configurazioni credibili del modello di Ising. Inoltre i campioni fake estratti non presentano alcuni difetti presenti nel dataset di partenza (generato con l'algoritmo di Metropolis), dovuti al basso numero di iterazioni.
 \chapter{Modello di Ising}
 Il modello di Ising consiste in un insieme di punti su un reticolo D-dimensionale. Per ogni punto $k$ c'è una variabile discreta $\sigma_k$ con valori $\lbrace-1, 1\rbrace$. Per ciascuna coppia di punti $i$ e $j$ c'è un termine di interazione $J_{ij}$. Inoltre al reticolo viene applicato un campo magnetico esterno $h_{k}$. L'energia di una data configurazione ha la forma:
 \begin{equation}
-H = - \sum_{i,j \text{ vicini}} J_{ij} \sigma_i \sigma_j - \sum_i h_i \sigma_i
+H = - \sum_{i,j \text{ vicini}} J_{ij} \sigma_i \sigma_j - \sum_i h_i \sigma_i 
+\label{isingcompleto}
 \end{equation}
 La prima somma si estende solo sulle coppie di punti vicini tra loro. Spesso, come nel nostro caso, il modello di Ising si analizza nell'ipotesi che non ci sia campo esterno e che l'interazione $J$ non vari con la posizione:
 \begin{equation}
@@ -61,18 +62,76 @@ In base alla temperatura, si distinguono:
 Il parametro d'ordine che consente facilmente di analizzare la transizione è la cosiddetta magnetizzazione spontanea. Essa rappresenta la media di tutti i valori degli spin e si calcola a partire dalla temperatura con la formula esatta di Onsager \cite{onsager}:
 \begin{equation}
 |M|(\beta) = (1-\sinh(2\beta J)^{-4})^{1/8}
+\label{eqonsager}
 \end{equation}
 \begin{figure}[H]
-\fbox{\includegraphics[scale=0.3]{ord.png}}
+\fbox{\includegraphics[scale=0.35]{ord.png}}
 \hspace{10pt}
-\fbox{\includegraphics[scale=0.3]{crit.png}}
+\fbox{\includegraphics[scale=0.35]{crit.png}}
 \hspace{10pt}
-\fbox{\includegraphics[scale=0.3]{disord.png}}
+\fbox{\includegraphics[scale=0.35]{disord.png}}
 \centering
 \caption{Configurazioni, rispettivamente, ordinate, critiche e disordinate del modello semplificato.}
 \end{figure}
 \section{Approssimazione di campo medio}
-La dimostrazione della formula di Onsager si ricava tramite un procedimento lungo e laborioso; pertanto, per cogliere gli aspetti salienti del comportamento dell'hamiltoniana, è preferibile utilizzare un'approssimazione di campo medio.
+La dimostrazione della formula di Onsager si ricava tramite un procedimento lungo e laborioso; pertanto, per cogliere gli aspetti salienti del comportamento dell'hamiltoniana, è preferibile utilizzare un'approssimazione di campo medio\cite{meanfield}. Sia $m$ la media degli spin su tutto il reticolo (che supponiamo bidimensionale e quadrato) e $\delta\sigma_k = \sigma_k - m$: si ha dunque:
+\begin{equation}
+H = -\sum_{i,j \text{ vicini}}  (m + \delta\sigma_i)(m + \delta\sigma_j) - \sum_i h_i \sigma_i 
+\end{equation}
+avendo posto (come sarà anche nella trattazione della GAN) $J=1$.
+Trascurando i termini quadratici in $\delta\sigma_{i,j}$ si ha:
+\begin{equation}
+H = - \sum_{i,j \text{ vicini}}  [m^2 + m (\delta\sigma_i + \delta\sigma_j)] - \sum_i h_i \sigma_i 
+\end{equation}
+Indicando con $nn(k)$ i 4 siti primi vicini del sito k-esimo si ha:
+\begin{equation}
+\sum_{i,j \text{ vicini}} = \frac{1}{2} \sum_i \sum_{j\in nn(i)} = \frac{1}{2} \sum_j \sum_{i\in nn(j)}
+\end{equation}
+Riscrivendo l'hamiltoniana in questa notazione:
+\begin{equation}
+H = \frac{1}{2} \sum_i \sum_{j\in nn(i)} m^2 - \frac{1}{2}m \sum_i \sum_{j\in nn(i)} \sigma_i - \frac{1}{2}Jm \sum_j \sum_{i\in nn(j)} \sigma_j - \sum_i h_i \sigma_i 
+\end{equation}
+Invertendo $i$ e $j$ nel penultimo addendo e sommando si ottiene:
+\begin{equation}
+H = 2 N m^2 - (4 m+h) \sum_i \sigma_i
+\end{equation}
+Si vede inoltre, confrontando con l'eq. \eqref{isingcompleto} che la quantità $h_{eff} = h+4m$ ha il ruolo di un campo magnetico.
+Essendo stata eliminata l'interazione spin-spin, si può scrivere l'hamiltoniana di singola particella:
+\begin{equation}
+H_i =  2  m^2 - h_{eff} \sigma_i
+\label{hamiltonianasingola}
+\end{equation}
+La funzione di partizione del sistema vale quindi (avendo posto $k_{B} = 1$):
+\begin{equation}
+Z = \frac{1}{N!} \left [ \sum_{\sigma \in \lbrace{1,\,-1}\rbrace} \exp \lbrace -2 \beta m^2 +  \beta h_{eff} \sigma \rbrace \right ] ^N
+\end{equation}
+ossia:
+\begin{equation}
+Z = \frac{2^N}{N!} \exp \lbrace - 2 \beta  N m^2 \rbrace \cosh^N(\beta h_{eff})
+\end{equation}
+Calcoliamo ora $m$ a partire da $Z$:
+\begin{equation}
+m = \frac{1}{N} \sum_i \langle \sigma_i \rangle
+\end{equation}
+Lo spin medio su ogni sito si trova mediando su tutte le configurazioni $S$:
+\begin{equation}
+\sum_i \langle \sigma_i \rangle = \frac{1}{Z} \sum_{S} \sum_i \sigma_i  \exp\lbrace-\beta H(S)\rbrace
+\end{equation}
+Dalla \eqref{hamiltonianasingola} notiamo che:
+\begin{equation}
+\frac{\partial H}{\partial h_{eff}} = - \sum_i \sigma_i 
+\end{equation}
+da cui:
+\begin{equation}
+m = - \frac{1}{NZ} \sum_{S} \frac{\partial H(S)}{\partial h_{eff}} \exp\lbrace-\beta H(S)\rbrace = \frac{1}{\beta NZ} \frac{\partial}{\partial h_{eff}} \sum_{S} \exp\lbrace-\beta H(S)\rbrace
+\end{equation}
+Si ottiene infine un'equazione di autoconsistenza:
+\begin{equation}
+m = \frac{1}{\beta N} \frac{\partial \ln(Z)}{\partial h_{eff}} = \tanh(\beta h_{eff})= \tanh(h+4\beta m)
+\end{equation}
+L'equazione ottenuta è di tipo trascendente, ma può essere studiata graficamente.
+Poiché vogliamo studiare la magnetizzazione spontanea, poniamo $h=0$; in tal caso per $4\beta<1$ l'unica soluzione è $m=0$, dunque non c'è ferromagnetismo. Invece per $4\beta>1$ vi sono anche due soluzioni opposte diverse da 0, dunque si osserva una magnetizzazione spontanea.
+Il comportamento ottenuto è dunque qualitativamente corretto, dal punto di vista magnetico: lo svantaggio dell'approssimazione risiede nell'errata temperatura critica predetta, se confrontata con quella all'eq. \eqref{eqonsager}.
 \section{Simulazione attraverso l'algoritmo di Metropolis}
 La probabilità di ciascuna configurazione di $N$ spin $\sigma = [\sigma_1, \sigma_2, ..., \sigma_N]$ è data dalla distribuzione di Boltzmann:
 \begin{equation}
@@ -83,7 +142,7 @@ Dunque il rapporto tra le probabilità di due configurazioni $\sigma_1$, $\sigma
 \frac{P_{\beta }(\sigma_1)}{P_{\beta }(\sigma_2)} = e^{-\beta [H(\sigma_1) - H(\sigma_2)]}
 \end{equation}
 La simulazione tradizionale del modello di Ising avviene attraverso l'algoritmo di Metropolis su un reticolo bidimensionale $L \times L$.
-Esso consiste in una serie di modifiche progressive della configurazione, da quella iniziale a quella finale. Per ogni iterazione, partendo da una configurazione $A$ si determina casualmente un sito $k$ sul reticolo e si inverte $\sigma_k$, ottenendo una configurazione $B$. Se l'energia dopo l'inversione diminuisce si accetta la nuova configurazione $B$, altrimenti la si accetta con probabilità $e^{\beta (H_A - H_B)}$. Nel calcolo dell'energia, per evitare effetti di bordo si usano condizioni al bordo periodiche. Dopo un certo numero di iterazioni (che aumenta con la temperatura) si ottiene una configurazione di equilibrio. \cite{metropolis-hastings}
+Esso consiste in una serie di modifiche progressive della configurazione, da quella iniziale a quella finale. \\Per ogni iterazione, partendo da una configurazione $A$ si determina casualmente un sito $k$ sul reticolo e si inverte $\sigma_k$, ottenendo una configurazione $B$. Se l'energia dopo l'inversione diminuisce si accetta la nuova configurazione $B$, altrimenti la si accetta con probabilità $e^{\beta (H_A - H_B)}$. Nel calcolo dell'energia, per evitare effetti di bordo si usano condizioni al bordo periodiche. Dopo un certo numero di iterazioni (che aumenta con la temperatura) si ottiene una configurazione di equilibrio. \cite{metropolis-hastings}
 \section{Approfondimento: applicazioni computazionali}
 Il modello di Ising, nella sua forma completa
 \begin{equation}
@@ -100,7 +159,7 @@ $z = x \wedge y$    & $-\sigma_x - \sigma_y + 2\sigma_z - 2\sigma_x\sigma_z - 2\
 $z = x \wedge \lnot y$   & $-\sigma_x + \sigma_y + 2\sigma_z - 2\sigma_x\sigma_z + 2\sigma_y\sigma_z - \sigma_x\sigma_y$ \\
 $z = x$        & $-2\sigma_x\sigma_z$                                                                          \\
 $z = \lnot x \wedge y$   & $+\sigma_x - \sigma_y + 2\sigma_z + 2\sigma_x\sigma_z - 2\sigma_y\sigma_z - \sigma_x\sigma_y$ \\
-$ z = y$       & $-2\sigma_y\sigma_z$                                                                           \\
+
 $z = x \vee y $   & $\sigma_x + \sigma_y - 2\sigma_z - 2\sigma_x\sigma_z - 2\sigma_y\sigma_z + \sigma_x\sigma_y$  \\
 
 \end{tabular}
@@ -210,7 +269,7 @@ Si vede dunque come la backpropagation semplifichi di molto la complessità e re
 \chapter{Reti Generative Avversarie}
 L'architettura GAN (Generative Adversarial Network) è uno degli sviluppi più promettenti del Deep Learning. 
 Essa (assieme agli autoencoder) consente infatti di ampliare il paradigma più diffuso in quest'ambito, ossia l'usare reti neurali per analizzare dati complessi e effettuare previsioni, regressioni o classificazioni. A questo proposito, si può dire che la differenza tra una rete generativa ed una rete classica è simile alla differenza tra una persona capace di distinguere un quadro di Monet ed un artista in grado di riprodurne lo stile. Come a sottolinearne la portata, tali reti sono perfino entrate nel dibattito pubblico, a causa del fenomeno dei deepfake\footnote{Si veda ad esempio: \url{https://www.congress.gov/bill/116th-congress/senate-bill/2065}}. 
-Vi sono anche GAN (dette Conditional GAN), come quella sviluppata per questa dissertazione, che consentono di modificare alcuuni parametri per generare campioni di un certo tipo.
+Vi sono anche GAN (dette Conditional GAN), come quella sviluppata per questa dissertazione, che consentono di modificare alcuni parametri per generare campioni di un certo tipo.
 Uno dei migliori esempi di Conditional GAN è styleGAN\footnote{Demo ufficiale: \url{www.thispersondoesnotexist.com}}, sviluppata da NVIDIA: essa consente di produrre immagini di volti umani di persone inesistenti, modificando parametri come il colore della pelle, il genere o l'età.\cite{stylegan}\\
 
 \begin{figure}[H]
@@ -272,7 +331,7 @@ Il dataset utilizzato per allenare le reti è stato fornito gentilmente del prof
 \label{difetti}
 \end{figure}
 \section{Topologia delle reti}
-Come discriminatore ho usato una rete convoluzionale\footnote{Anche detta CNN, da Convolutional Neural Network.\\ Si veda: \url{https://www.deeplearningbook.org/contents/convnets.html}}, (anche detta che prende in input le immagini da analizzare $I$ e la classe di temperatura $T$. Il vettore one-hot\footnote{Un vettore one-hot è un versore con una sola componente uguale ad 1 e le altre pari a 0. Normalmente, come in questo caso, l'indice della componente pari ad 1 rappresenta un'indice di classe.} $T$ in input viene processato da un layer denso (ossia con tutte le sinapsi tra esso ed il layer precedente attive) e trasformato in una matrice $M$ $(28\times28)$. Successivamente $I$ ed $M$ vengono concatenate ottenendo un'immagine $(28\times28\times2)$ a due canali, che viene passata al primo layer convoluzionale. L'output della rete, invece, è la probabilità che l'immagine in input sia reale e corrisponda alla temperatura indicata.
+Come discriminatore ho usato una rete convoluzionale\footnote{Anche detta CNN, da Convolutional Neural Network.\\ Si veda: \url{https://www.deeplearningbook.org/contents/convnets.html}}, che prende in input le immagini da analizzare $I$ e la classe di temperatura $T$. Il vettore one-hot\footnote{Un vettore one-hot è un versore con una sola componente uguale ad 1 e le altre pari a 0. Normalmente, come in questo caso, l'indice della componente pari ad 1 rappresenta un'indice di classe.} $T$ in input viene processato da un layer denso (ossia con tutte le sinapsi tra esso ed il layer precedente attive) e trasformato in una matrice $M$ $(28\times28)$. Successivamente $I$ ed $M$ vengono concatenate ottenendo un'immagine $(28\times28\times2)$ a due canali, che viene passata al primo layer convoluzionale. L'output della rete, invece, è la probabilità che l'immagine in input sia reale e corrisponda alla temperatura indicata.
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{dis.png}\\
 \includegraphics[width=\textwidth]{legend.jpg}

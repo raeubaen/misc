@@ -11,6 +11,12 @@ Lars Onsager.
   transition.
 \newblock {\em Phys. Rev.}, 65:117--149, Feb 1944.
 
+\bibitem{meanfield}
+H.~E. Stanley.
+\newblock {\em Introduction to Phase Transitions and Critical Phenomena},
+  chapter "Mean Field Theory of Magnetic Phase Transitions".
+\newblock Oxford University Press, 1971.
+
 \bibitem{metropolis-hastings}
 Siddhartha Chib and Edward Greenberg.
 \newblock Understanding the metropolis-hastings algorithm.
@@ -24,8 +30,7 @@ Zhengbing Bian, Fabi{\'a}n~A. Chudak, William~G. Macready, and Geordie Rose.
 \bibitem{quantumannealing}
 Juexiao Su, Tianheng Tu, and Lei He.
 \newblock A quantum annealing approach for boolean satisfiability problem.
-\newblock In {\em Proceedings of the 53rd Annual Design Automation Conference}.
-  Association for Computing Machinery, 2016.
+\newblock Association for Computing Machinery, 2016.
 
 \bibitem{nielsenneural}
 Michael~A. Nielsen.
