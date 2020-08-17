@@ -24,7 +24,7 @@ Siddhartha Chib and Edward Greenberg.
 
 \bibitem{dwave}
 Zhengbing Bian, Fabi{\'a}n~A. Chudak, William~G. Macready, and Geordie Rose.
-\newblock The ising model : teaching an old problem new tricks.
+\newblock The ising model: teaching an old problem new tricks.
 \newblock 2010.
 
 \bibitem{quantumannealing}
@@ -70,12 +70,12 @@ Alex B{\"{a}}uerle and Timo Ropinski.
 \bibitem{adam}
 Diederik Kingma and Jimmy Ba.
 \newblock Adam: A method for stochastic optimization.
-\newblock {\em International Conference on Learning Representations}, 12 2014.
+\newblock {\em International Conference on Learning Representations}, Dec 2014.
 
 \bibitem{reference}
 Zhaocheng Liu, Sean Rodrigues, and Wenshan Cai.
 \newblock Simulating the ising model with a deep convolutional generative
   adversarial network.
-\newblock 10 2017.
+\newblock Oct 2017.
 
 \end{thebibliography}
