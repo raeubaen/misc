@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.8.17)  17 AUG 2020 22:19
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.8.17)  18 AUG 2020 17:45
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -853,11 +853,11 @@ Package rerunfilecheck Info: File `progetto.out' has not changed.
 (rerunfilecheck)             Checksum: FBBD6CC3B171A333A5AF8671FB22197E;1445.
  ) 
 Here is how much of TeX's memory you used:
- 12634 strings out of 480893
- 195282 string characters out of 5908067
- 521719 words of memory out of 5000000
+ 12632 strings out of 480893
+ 195262 string characters out of 5908067
+ 521710 words of memory out of 5000000
  27688 multiletter control sequences out of 15000+600000
- 657489 words of font info for 170 fonts, out of 8000000 for 9000
+ 657406 words of font info for 169 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  63i,12n,100p,1450b,473s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/lo
@@ -886,7 +886,7 @@ t/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2020/texmf-dist/fonts/typ
 e1/public/lm/lmsy9.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/l
 m/lmtt9.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/sym
 bols/msbm10.pfb>
-Output written on progetto.pdf (23 pages, 3560238 bytes).
+Output written on progetto.pdf (23 pages, 3560204 bytes).
 PDF statistics:
  512 PDF objects out of 1000 (max. 8388607)
  420 compressed objects within 5 object streams

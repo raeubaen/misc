@@ -16,7 +16,7 @@
 \courseorganizer{Facoltà di Scienze Matematiche, Fisiche e Naturali}
 \submitdate{2019/2020}
 \copyyear{2020}
-\advisor{Chiar.mo Prof. S.Giagu}
+\advisor{Prof. S.Giagu}
 \authoremail{gargiulo.1824800@studenti.uniroma1.it}
 \begin{document}
 
@@ -24,16 +24,16 @@
 \maketitle
 
 \begin{abstract}
-Negli ultimi anni l'architettura delle CNN si è affermata tra i metodi più efficaci per rappresentare dati complessi, soprattutto se strutturati come immagini. Al contempo le GAN, assieme ad altri tipi di reti, hanno ampliato il potere delle reti neurali permettendo di generare nuovi campioni dei dataset di partenza.
-I modelli generativi formati da reti avversarie convoluzionali, detti DCGAN, uniscono questi due aspetti dando accesso a simulazioni fisiche sempre più realistiche. Uno dei punti vincenti di quest'approccio è che, una volta allenate le reti, la simulazione avviene in un tempo irrisorio rispetto a quello richiesto dai metodi più classici. In questa dissertazione discuterò dell'uso di una DCGAN per generare campioni 28x28 del modello di Ising, dato un certo range di temperatura.
+Negli ultimi anni le reti neurali convoluzionali si sono affermate come uno dei metodi più efficaci per rappresentare ed analizzare dati complessi, soprattutto se strutturati come immagini. Al contempo le GAN (reti generative avversarie) hanno ampliato il potere delle reti neurali permettendo di generare nuovi campioni dei dataset di partenza.
+I modelli generativi formati da reti avversarie convoluzionali, detti DCGAN, uniscono questi due aspetti dando accesso a simulazioni fisiche sempre più realistiche. Uno dei punti vincenti di quest'approccio è che, una volta allenate le reti, la simulazione avviene in un tempo irrisorio rispetto a quello richiesto dai metodi tradizionali. In questa dissertazione discuterò dell'uso di una DCGAN per generare campioni 28x28 del modello di Ising, dato un certo range di temperatura.
 \end{abstract}
 \tableofcontents
 \mainmatter
 \chapter{Introduzione}
 In fisica c'è una continua necessità di effettuare simulazioni numeriche. Esse possono porsi come veri e propri esperimenti virtuali, facilitando la comprensione dei fenomeni in studio, estendendo i limiti dei metodi sperimentali e consentendo di confutare alcune teorie o di formularne altre. \\
 Molto spesso le simulazioni permettono di studiare fenomeni che non hanno una soluzione analitica, come nel caso della prima simulazione fisica di grande dimensione, effettuata nell'ambito del progetto Manhattan.
-Per modellizzare il processo della detonazione nucleare, infatti, Fermi e i suoi collaboratori ne simularono il comportamento su grossi calcolatori analogici. In questa circostanza fu sviluppato da N. C. Metropolis l'algoritmo Monte Carlo, il metodo principe della simulazione fisica. A Metropolis dobbiamo anche l'invenzione dell'algoritmo più diffuso appartenente a questa classe (Metropolis-Hastings).\\
-Uno dei fenomeni più interessanti che normalmente si simula attraverso tale algoritmo è il ferromagnetismo. Esso è stato modellizzato per la prima volta, attraverso una catena di spin interagenti, da Ernst Ising, che non riscontrò transizioni di fase. In due e in tre dimensioni, al contrario, si osserva una transizione che corrisponde al passaggio dal ferromagnetismo al paramagnetismo dopo il superamento della temperatura di Curie: questo comportamento può essere osservato sperimentalmente anche con materiali di uso comune, come nel celebre Pendolo di Curie. \\
+Per modellizzare il processo della detonazione nucleare, infatti, Fermi e i suoi collaboratori ne simularono il comportamento su grossi calcolatori analogici. In questa circostanza fu sviluppato da N. C. Metropolis l'algoritmo Monte Carlo, il metodo principe della simulazione fisica. A Metropolis dobbiamo anche l'invenzione dell'algoritmo più diffuso appartenente a questa classe, che porta infatti il suo nome.\\
+Uno dei fenomeni più interessanti che normalmente si simula attraverso tale procedura è il ferromagnetismo. Esso è stato modellizzato per la prima volta, attraverso una catena di spin interagenti, da Ernst Ising, che non riscontrò transizioni di fase. In due e in tre dimensioni, al contrario, si osserva una transizione che corrisponde al passaggio dal ferromagnetismo al paramagnetismo dopo il superamento della temperatura di Curie: questo comportamento può essere osservato sperimentalmente anche con materiali di uso comune, come nel celebre Pendolo di Curie. \\
 Il modello di Ising, inoltre, ha avuto un'importanza storica nell'affermazione della meccanica statistica moderna.
 Già nel IV secolo a.C. Democrito notò che l'atomismo poteva spiegare i comportamenti discontinui della natura, ossia le transizioni di fase. Egli pensava che piccoli cambiamenti nel comportamento della materia su scala atomica potessero provocare modifiche osservabili nello stato macroscopico. 
 Al contrario molti altri filosofi, la cui tesi si impose rimanendo dominante fino almeno al XIX secolo, erano convinti della natura continua della realtà (si ricordi il "Natura non facit saltus" di Leibniz). \\
