@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.8.17)  18 AUG 2020 17:45
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.8.17)  22 AUG 2020 21:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -785,16 +785,16 @@ Package pdftex.def Info: non-saturating-GAN.png  used on input line 320.
 (pdftex.def)             Requested size: 378.41283pt x 171.13895pt.
  [13 <./non-saturating-GAN.png>]
 Capitolo 5.
-<dataset.png, id=320, 904.37875pt x 306.14375pt>
-File: dataset.png Graphic file (type png)
-<use dataset.png>
-Package pdftex.def Info: dataset.png  used on input line 328.
-(pdftex.def)             Requested size: 316.80121pt x 107.24066pt.
-<difetti.png, id=321, 1137.5298pt x 112.7412pt>
-File: difetti.png Graphic file (type png)
-<use difetti.png>
-Package pdftex.def Info: difetti.png  used on input line 329.
-(pdftex.def)             Requested size: 356.39758pt x 35.32271pt.
+<dataset.pdf, id=320, 1693.28606pt x 567.07863pt>
+File: dataset.pdf Graphic file (type pdf)
+<use dataset.pdf>
+Package pdftex.def Info: dataset.pdf  used on input line 328.
+(pdftex.def)             Requested size: 316.80121pt x 106.09335pt.
+<difetti.pdf, id=321, 2859.96483pt x 273.66241pt>
+File: difetti.pdf Graphic file (type pdf)
+<use difetti.pdf>
+Package pdftex.def Info: difetti.pdf  used on input line 329.
+(pdftex.def)             Requested size: 356.39758pt x 34.09914pt.
 <dis.png, id=325, 651.8754pt x 244.2726pt>
 File: dis.png Graphic file (type png)
 <use dis.png>
@@ -807,42 +807,47 @@ Package pdftex.def Info: legend.jpg  used on input line 338.
 (pdftex.def)             Requested size: 396.0pt x 31.31499pt.
 [14
 
- <./dataset.png> <./difetti.png>]
-<gen.png, id=341, 586.47105pt x 173.448pt>
+ <./dataset.pdf> <./difetti.pdf
+
+pdfTeX warning: pdflatex (file ./difetti.pdf): PDF inclusion: multiple pdfs wit
+h page group included in a single page
+>]
+<gen.png, id=352, 586.47105pt x 173.448pt>
 File: gen.png Graphic file (type png)
 <use gen.png>
 Package pdftex.def Info: gen.png  used on input line 346.
 (pdftex.def)             Requested size: 356.39758pt x 105.40347pt.
-<reg.png, id=342, 763.1712pt x 111.65715pt>
+<reg.png, id=353, 763.1712pt x 111.65715pt>
 File: reg.png Graphic file (type png)
 <use reg.png>
 Package pdftex.def Info: reg.png  used on input line 352.
 (pdftex.def)             Requested size: 396.0pt x 57.93767pt.
  [15 <./dis.png> <./legend.jpg> <./gen.png>] [16 <./reg.png>]
-<fig1.png, id=367, 2302.5222pt x 1131.7482pt>
-File: fig1.png Graphic file (type png)
-<use fig1.png>
-Package pdftex.def Info: fig1.png  used on input line 381.
-(pdftex.def)             Requested size: 396.0pt x 194.63962pt.
-<fakescatter.png, id=371, 404.51125pt x 283.0575pt>
+<ising.png, id=380, 1735.6845pt x 855.9177pt>
+File: ising.png Graphic file (type png)
+<use ising.png>
+Package pdftex.def Info: ising.png  used on input line 381.
+(pdftex.def)             Requested size: 396.0pt x 195.27664pt.
+<fakescatter.png, id=383, 404.51125pt x 283.0575pt>
 File: fakescatter.png Graphic file (type png)
 <use fakescatter.png>
 Package pdftex.def Info: fakescatter.png  used on input line 388.
 (pdftex.def)             Requested size: 194.04218pt x 135.78398pt.
-<origscatter.png, id=372, 404.51125pt x 283.0575pt>
+<origscatter.png, id=384, 404.51125pt x 283.0575pt>
 File: origscatter.png Graphic file (type png)
 <use origscatter.png>
 Package pdftex.def Info: origscatter.png  used on input line 389.
 (pdftex.def)             Requested size: 194.04218pt x 135.78398pt.
-<hist.png, id=373, 402.50375pt x 265.99374pt>
+<hist.png, id=385, 402.50375pt x 265.99374pt>
 File: hist.png Graphic file (type png)
 <use hist.png>
 Package pdftex.def Info: hist.png  used on input line 394.
 (pdftex.def)             Requested size: 277.19879pt x 183.18683pt.
- [17 <./fig1.png>] [18 <./fakescatter.png> <./origscatter.png> <./hist.png>] (.
-/progetto.bbl)
+ [17 <./ising.png>] [18 <./fakescatter.png> <./origscatter.png> <./hist.png>] (
+./progetto.bbl)
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 404.
- [19
+
+[19
 
 ]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 404.
@@ -850,14 +855,14 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 404.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 404.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 404.
 Package rerunfilecheck Info: File `progetto.out' has not changed.
-(rerunfilecheck)             Checksum: FBBD6CC3B171A333A5AF8671FB22197E;1445.
+(rerunfilecheck)             Checksum: 29A722878697D9184A5E60BA93C1A118;1453.
  ) 
 Here is how much of TeX's memory you used:
- 12632 strings out of 480893
- 195262 string characters out of 5908067
- 521710 words of memory out of 5000000
+ 12635 strings out of 480893
+ 195347 string characters out of 5908067
+ 520758 words of memory out of 5000000
  27688 multiletter control sequences out of 15000+600000
- 657406 words of font info for 169 fonts, out of 8000000 for 9000
+ 657489 words of font info for 170 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  63i,12n,100p,1450b,473s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/lo
@@ -886,10 +891,10 @@ t/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2020/texmf-dist/fonts/typ
 e1/public/lm/lmsy9.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/l
 m/lmtt9.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/sym
 bols/msbm10.pfb>
-Output written on progetto.pdf (23 pages, 3560204 bytes).
+Output written on progetto.pdf (23 pages, 4106226 bytes).
 PDF statistics:
- 512 PDF objects out of 1000 (max. 8388607)
- 420 compressed objects within 5 object streams
- 122 named destinations out of 1000 (max. 500000)
+ 526 PDF objects out of 1000 (max. 8388607)
+ 432 compressed objects within 5 object streams
+ 123 named destinations out of 1000 (max. 500000)
  33562 words of extra memory for PDF output out of 35830 (max. 10000000)
 

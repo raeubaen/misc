@@ -24,8 +24,8 @@
 \maketitle
 
 \begin{abstract}
-Negli ultimi anni le reti neurali convoluzionali si sono affermate come uno dei metodi più efficaci per rappresentare ed analizzare dati complessi, soprattutto se strutturati come immagini. Al contempo le GAN (reti generative avversarie) hanno ampliato il potere delle reti neurali permettendo di generare nuovi campioni dei dataset di partenza.
-I modelli generativi formati da reti avversarie convoluzionali, detti DCGAN, uniscono questi due aspetti dando accesso a simulazioni fisiche sempre più realistiche. Uno dei punti vincenti di quest'approccio è che, una volta allenate le reti, la simulazione avviene in un tempo irrisorio rispetto a quello richiesto dai metodi tradizionali. In questa dissertazione discuterò dell'uso di una DCGAN per generare campioni 28x28 del modello di Ising, dato un certo range di temperatura.
+Negli ultimi anni le cosiddette reti neurali convoluzionali (CNN) si sono affermate come uno dei metodi più efficaci per rappresentare ed analizzare dati complessi, soprattutto se strutturati come immagini. Al contempo le cosiddette reti generative avversarie (GAN) hanno ampliato il campo di applicazione delle reti neurali permettendo di generare nuovi campioni indistinguibili rispetto a quelli utilizzati per l'addestramento.
+I modelli generativi formati da reti avversarie convoluzionali profonde (DCGAN) uniscono questi due aspetti dando accesso a simulazioni fisiche sempre più realistiche. Uno dei punti vincenti di quest'approccio è che, una volta allenate le reti, la simulazione avviene in un tempo irrisorio rispetto a quello richiesto dai metodi tradizionali. In questa dissertazione discuterò dell'uso di una DCGAN per generare campioni di configurazioni di un modello di Ising bidimensionale, dato un certo range di temperatura.
 \end{abstract}
 \tableofcontents
 \mainmatter
@@ -149,8 +149,8 @@ Il modello di Ising, nella sua forma completa
 \begin{equation}
 H = - \sum_{i,j \text{ vicini}} J_{ij} \sigma_i \sigma_j - \sum_i h_i \sigma_i
 \end{equation}
-è uno dei modelli fisici più usati al di fuori del suo ambito. Si stima che nel periodo tra il 1969 al 1997 siano stati pubblicati più di 12,000 articoli nei quali lo si usava per descrivere fenomeni in diversi campi, dall'intelligenza artificale alla zoologia. \cite{dwave}
-Un'interessante applicazione riguarda il calcolo booleano parallelo. Infatti a bassissima temperatura, assegnata una matrice $J$ e un vettore $h$, le configurazioni che si osservano in natura sono quelle che corrispondono al minimo globale dell'energia. La natura quindi provvede autonomamente all'ottimizzazione dei valori $\sigma$ per minimizzare $H$, che è un problema computazionalmente NP-completo, ossia molto dispendioso da calcolare. A questo punto si può introdurre un'analogia tra il calcolo di espressioni booleane e la minimizzazione di $H$. Trattando $\sigma=-1, 1$ come un valore booleano falso o vero, le tavole della verità per gli operatori logici possono essere codificate attraverso modelli di Ising, variando $J$ e $h$.\\ Introducendo il concetto di soddisfacibilità booleana (SAT), che consiste nel determinare, data una espressione booleana, se esiste un qualche assegnamento di valori 1 e 0 tali da rendere l'intera espressione vera, un problema SAT si può rappresentare con un modello di Ising cosicchè un espressione è soddisfacibile solo se lo stato fondamentale del reticolo associato ha energia 0. Dunque un problema SAT può essere risolto fisicamente codificandolo attraverso un reticolo di spin a bassa temperatura ed osservando lo stato fondamentale. In questo modo si risolve il problema attraverso un calcolo estremamente parallelo (quantum annealing).\cite{quantumannealing}
+è uno dei modelli fisici più usati al di fuori del suo ambito. Si stima che nel periodo tra il 1969 al 1997 siano stati pubblicati più di 12,000 articoli nei quali lo si usava per descrivere fenomeni in diversi campi, dall'intelligenza artificiale alla zoologia. \cite{dwave}
+Un'interessante applicazione riguarda il calcolo booleano parallelo. Infatti a bassissima temperatura, assegnata una matrice $J$ e un vettore $h$, le configurazioni che si osservano in natura sono quelle che corrispondono al minimo globale dell'energia. La natura quindi provvede autonomamente all'ottimizzazione dei valori $\sigma$ per minimizzare $H$, che è un problema computazionalmente NP-completo, ossia molto dispendioso da calcolare. A questo punto si può introdurre un'analogia tra il calcolo di espressioni booleane e la minimizzazione di $H$. Trattando $\sigma=-1, 1$ come un valore booleano falso o vero, le tavole della verità per gli operatori logici possono essere codificate attraverso modelli di Ising, variando $J$ e $h$.\\ Introducendo il concetto di soddisfacibilità booleana (SAT), che consiste nel determinare, data una espressione booleana, se esiste un qualche assegnamento di valori 1 e 0 tali da rendere l'intera espressione vera, un problema SAT si può rappresentare con un modello di Ising cosicchè un'espressione è soddisfacibile solo se lo stato fondamentale del reticolo associato ha energia 0. Dunque un problema SAT può essere risolto fisicamente codificandolo attraverso un reticolo di spin a bassa temperatura ed osservando lo stato fondamentale. In questo modo si risolve il problema attraverso un calcolo estremamente parallelo (quantum annealing).\cite{quantumannealing}
 \begin{table}[H]
 \begin{tabular}{l|l}
 Logic function & Ising function\\
@@ -180,7 +180,7 @@ dove $w$ (detto vettore dei pesi sinaptici) e $b$ (detto vettore dei bias) hanno
 \centering
 \caption{Schematizzazione tramite un grafo di una rete neurale composta da percettroni.}
 \end{figure}
-Le reti neurali più utilizzate, dette feedforward, sono organizzate in più strati (detti layer) di neuroni, che non presentano connessioni tra neuroni dello stesso strato e tra neuroni di strati non contingui.
+Le reti neurali più utilizzate, dette feedforward, sono organizzate in più strati (detti layer) di neuroni, che non presentano connessioni tra neuroni dello stesso strato e tra neuroni di strati non contigui.
 La ragione del successo delle reti di questo tipo risiede nel teorema di approssimazione universale. Esso afferma che una rete feedforward completamente connessa, con larghezza o profondità arbitraria e funzione di attivazione non lineare, può approssimare qualsiasi funzione continua. L'apprendimento automatico svolto utilizzando tali reti, per la loro proprietà di "profondità" e per il fatto che sono capaci di rappresentare informazioni tramite gerarchie di concetti, è detto comunemente Deep Learning, o Deep Representation Learning.
 \begin{figure}[H]
 \includegraphics[width=0.7\textwidth]{information-10-00122-g002.png}
@@ -323,12 +323,12 @@ Uno dei motivi per cui si preferisce questa loss è che tende a saturare di meno
 \end{figure}
 \chapter{Sviluppo della DCGAN}
 \section{Dataset}
-Il dataset utilizzato per allenare le reti è stato fornito gentilmente dal prof. S. Giagu. Esso è stato ottenuto con l'algoritmo di Metropolis e consiste in 10k configurazioni con temperatura da 0 a 5. Il dataset, a causa di una termalizzazione leggermente incompleta, presenta due caratteristiche che saranno processate in modo diverso dalla GAN. Come si vede in figura \ref{difetti}, vi è infatti la ripetizione di un pattern nella prima riga di pixel di quasi tutte le configurazioni e la presenza, nelle configurazioni a bassa temperatura, di bande verticali di spin allineati, corrispondenti in totale all'1\% del dataset.
+Il dataset utilizzato per allenare le reti è stato fornito gentilmente dal prof. S. Giagu. Esso è stato ottenuto con l'algoritmo di Metropolis e consiste in 10k configurazioni con temperatura da 0 a 5. Il dataset, a causa di una termalizzazione leggermente incompleta, presenta una caratteristica anomala. Come si vede in figura \ref{difetti}, vi è infatti la presenza, nelle configurazioni a bassa temperatura, di bande verticali di spin allineati, corrispondenti in totale a circa l'1\% del dataset, dovuti a stati metastabili emersi durante le simulazione.
 \begin{figure}[H]
-\includegraphics[width=0.8\textwidth]{dataset.png}\\
-\includegraphics[width=0.9\textwidth]{difetti.png}
+\includegraphics[width=0.8\textwidth]{dataset.pdf}\\
+\includegraphics[width=0.9\textwidth]{difetti.pdf}
 \centering
-\caption{Visualizzazione delle suddette caratteristiche del dataset}
+\caption{Visualizzazione di 3 campioni del dataset (uno per ogni fase) e delle suddette configurazioni metastabili.}
 \label{difetti}
 \end{figure}
 \section{Topologia delle reti}
@@ -376,13 +376,13 @@ Ho quindi eseguito il training progressivamente con 300 epoche per ciascuna fase
 \section{Processing post-training}
 Per aumentare la variabilità dei campioni generati, ho aggiunto al generatore un layer subito prima dell'output che inverte casualmente tutti gli spin con probabilità 1/2. Inoltre ho inserito un layer finale che arrotonda gli output a -1 o 1.
 \section{Risultati}
-I campioni generati sono abbastanza soddisfacenti: graficamente, come si vede in figura, sono molto simili a quelli generati tramite Metropolis. 
+I campioni generati sono abbastanza soddisfacenti\footnote{Si veda il notebook Python utilizzato: \url{https://github.com/raeubaen/ml/blob/master/dissertazione/Ising-DCGAN.ipynb}}: graficamente, come si vede in figura, sono molto simili a quelli generati tramite Metropolis.
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{fig1.png}
+\includegraphics[width=\textwidth]{ising.png}
 \centering
 \caption{50 diverse configurazioni generate dalla GAN. I campioni sulla stessa colonna corrispondono alla stessa classe di temperatura, che aumenta da sinistra a destra.}
 \end{figure}
-Inoltre, come si vede dalla distribuzione della magnetizzazione, la GAN non ha imparato a riprodurre le configurazioni a bande verticali, che erano una caratteristica anomala del dataset (cfr. fig. \ref{difetti}). Questo è probabilmente dovuto al fatto che, dovendo discriminare i campioni anche in base alla temperatura, le configurazioni a bande verticali (che hanno label di temperatura bassa o nulla, ma magnetizzazione piccola) sono percepite dalla rete come anomale. Purtroppo ciò non è avvenuto per il pattern sulla prima riga (cfr. fig. \ref{difetti}), che si ripresenta identico in tutte le configurazioni generate.
+Inoltre, come si vede dalla distribuzione della magnetizzazione, la GAN non ha imparato a riprodurre le configurazioni metastabili a bande verticali, che erano una caratteristica anomala del dataset presente a bassa temperatura(cfr. fig. \ref{difetti}). Questo è dovuto al fatto che tali campioni sono presenti in una piccola frazione del dataset e quindi la rete gli ha dato minore peso.
 Come si vede dallo scatter plot in figura, che contiene 10k punti, la distribuzione della magnetizzazione in funzione della temperatura è molto simile all'originale, a parte per il fatto che non presenta i suddetti difetti a basse temperatura (cfr. fig. \ref{difetti}).
 \begin{figure}[H]
 \includegraphics[width=0.49\textwidth]{fakescatter.png}
@@ -395,7 +395,7 @@ Come si vede dallo scatter plot in figura, che contiene 10k punti, la distribuzi
 \centering
 \caption{Confronto tra l'istogramma della magnetizzazione dei campioni fake e degli originali.}
 \end{figure}
-\section{Deployment in JS}
+\section{Deployment in JavaScript}
 Come demo della GAN sviluppata ho implementato una pagina HTML\footnote{\url{https://raeubaen.github.io/ising.html}} che crea configurazioni del modello di Ising per una data temperatura. La generazione della configurazione avviene sulla macchina del client; ho infatti salvato il modello ed i pesi del generatore da Keras in Python ed implementato il sampling tramite TensorflowJS.
 \newpage
 \nocite{reference}
