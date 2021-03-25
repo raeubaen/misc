@@ -1,6 +1,0 @@
-Per quanto riguarda la parte su Ising si trovano informazioni in molti posti, per la simulazione del modello 2D che ho usato puoi vedere due articoli su simulazione semplice sistemi di Ising 2D: 
-- http://vixra.org/pdf/1710.0021v2.pdf
-oppure:
-- http://www.emanuelschmidt.eu/physik/ising.pdf
-
-Come articolo di riferimento sul lavoro che hai fatto (GAN per simulare Ising): https://arxiv.org/pdf/1710.04987.pdf
