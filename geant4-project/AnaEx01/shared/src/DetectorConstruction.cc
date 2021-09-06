@@ -68,10 +68,10 @@ DetectorConstruction::DetectorConstruction()
  fDetectorMessenger(0)
 {
   // default parameter values of the calorimeter
-  fAbsorberThickness = 5.*m;
+  fAbsorberThickness = 1.*m;
   fGapThickness      =  0;
   fNbOfLayers        = 1;
-  fCalorSizeYZ       = 5.*m;
+  fCalorSizeYZ       = 1.*m;
   ComputeCalorParameters();
   
   // materials

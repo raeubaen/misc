@@ -36,9 +36,14 @@
 
 #include "globals.hh"
 
-#include "g4root.hh"
-//#include "g4csv.hh"
+//#include "g4root.hh"
+#include "g4csv.hh"
 //#include "g4xml.hh"
+#include <iostream>
+using std::cerr;
+using std::endl;
+#include <fstream>
+using std::ofstream;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -57,7 +62,7 @@ class HistoManager
     void FillNtuple(G4double EnergyAbs, G4double EnergyGap,
                     G4double TrackLAbs, G4double TrackLGap);
     
-    void PrintStatistic();        
+    void PrintStatistic();
     
   private:
     G4bool fFactoryOn;    

@@ -31,11 +31,14 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include <iostream> 
-
 #include "HistoManager.hh"
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
+#include <iostream>
+using std::cerr;
+using std::endl;
+#include <fstream>
+using std::ofstream;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -62,6 +65,7 @@ void HistoManager::Book()
   analysisManager->SetNtupleMerging(true);
 #endif
 
+
   // Create directories
   analysisManager->SetHistoDirectoryName("histo");
   analysisManager->SetNtupleDirectoryName("ntuple");
@@ -75,6 +79,7 @@ void HistoManager::Book()
     return;
   }
 
+  
   // Create histograms.
   // Histogram ids are generated automatically starting from 0.
   // The start value can be changed by:
@@ -87,33 +92,44 @@ void HistoManager::Book()
   analysisManager->CreateH1("EGap","Edep in gap (MeV)", 100, 0., 100*MeV);
   analysisManager->SetH1Ascii(1, true);
   // id = 2
-  analysisManager->CreateH1("LAbs","trackL in absorber (mm)", 100, 0., 1*m);
+  analysisManager->CreateH1("LAbs","trackL in absorber (mm)", 100, 0., 5.*cm);
   analysisManager->SetH1Ascii(2, true);
   // id = 3
-  analysisManager->CreateH1("LGap","trackL in gap (mm)", 100, 0., 50*cm);
+  analysisManager->CreateH1("LGap","trackL in gap (mm)", 100, 0., 5*cm);
   analysisManager->SetH1Ascii(3, true);
-  // id = 0
-  G4int h2id = analysisManager->CreateH2("TransDev","Transverse development in absorber (mm)", 3000, 0., 1*m, 1000, 0., 1*m);
-  analysisManager->SetH2Ascii(0, true);
-  std::cout << "id h2: " << h2id << std::endl;
+  // id = 4
+  analysisManager->CreateP1("TransDev","Transverse development in absorber (mm)", 3000, -5.*cm, 5.*cm, 0., 300.*MeV);
+
+  analysisManager->CreateP2(
+    "TransDev","Transverse and longitudinal development in absorber (mm)",
+    3000, 0.*cm, 5.*cm,
+    3000, -50.*cm, 50.*cm,
+    0., 300.*MeV
+  );
   // Create ntuples.
   // Ntuples ids are generated automatically starting from 0.
   // The start value can be changed by:
   // analysisManager->SetFirstMtupleId(1);
-
+  /*
   // Create 1st ntuple (id = 0)
   analysisManager->CreateNtuple("Ntuple1", "Edep");
   analysisManager->CreateNtupleDColumn("Eabs"); // column Id = 0
   analysisManager->CreateNtupleDColumn("Egap"); // column Id = 1
   analysisManager->FinishNtuple();
-
   // Create 2nd ntuple (id = 1)
   //
   analysisManager->CreateNtuple("Ntuple2", "TrackL");
   analysisManager->CreateNtupleDColumn("Labs"); // column Id = 0
   analysisManager->CreateNtupleDColumn("Lgap"); // column Id = 1
   analysisManager->FinishNtuple();
-
+  */
+  //id = 2
+  analysisManager->CreateNtuple("TransDev", "transv and long");
+  analysisManager->CreateNtupleDColumn("perpL"); // column Id = 0
+  analysisManager->CreateNtupleDColumn("zL"); // column Id = 1
+  analysisManager->CreateNtupleDColumn("eDep"); // column Id = 2
+  analysisManager->FinishNtuple();
+  //analysisManager->SetAscii(G4VAnalysisManager::ObjectType::kNtuple, 2, true);
   fFactoryOn = true;
 
   G4cout << "\n----> Output file is open in "

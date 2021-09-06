@@ -33,11 +33,16 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include <iostream>
-
+#include "Randomize.hh"
 #include "DetectorConstruction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
 #include "HistoManager.hh"
+using std::cerr;
+using std::endl;
+#include <fstream>
+using std::ofstream;
+
 
 #include "G4Step.hh"
 #include "G4Positron.hh"
@@ -68,21 +73,27 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   // get volume of the current step
   G4VPhysicalVolume* volume
   = aStep->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
-  
+
   // collect energy and track length step by step
   G4double edep = aStep->GetTotalEnergyDeposit();
-  
+
   G4double stepl = 0.;
   if (aStep->GetTrack()->GetDefinition()->GetPDGCharge() != 0.)
     stepl = aStep->GetStepLength();
-      
+
   if (volume == fDetector->GetAbsorber()) fEventAction->AddAbs(edep,stepl);
   if (volume == fDetector->GetGap())      fEventAction->AddGap(edep,stepl);
 
   if (edep>0.) {
-      //std::cout << "step: " << aStep->GetPreStepPoint()->GetPosition().perp()/mm << std::endl;
-      //std::cout << "edep: " << edep/eV << std::endl;
-      G4AnalysisManager::Instance()->FillH2(0, aStep->GetPreStepPoint()->GetPosition().perp(), aStep->GetPreStepPoint()->GetPosition().z(), edep);
+
+      G4ThreeVector prePoint  = aStep->GetPreStepPoint()->GetPosition();
+      G4ThreeVector delta = aStep->GetPostStepPoint()->GetPosition() - prePoint;
+      prePoint += G4UniformRand()*delta;
+
+      ofstream fs;
+      fs.open("dati.csv", ofstream::app);
+      fs << prePoint.perp()/mm << " " << prePoint.z()/mm << " " << edep/MeV << endl;
+      fs.close();
   }
 }
 
