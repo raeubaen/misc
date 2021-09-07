@@ -90,6 +90,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
       G4ThreeVector delta = aStep->GetPostStepPoint()->GetPosition() - prePoint;
       prePoint += G4UniformRand()*delta;
 
+      G4AnalysisManager::Instance()->FillP1(0, prePoint.y()/mm, edep/MeV);
+
+      G4AnalysisManager::Instance()->FillP2(0, prePoint.z()/mm, prePoint.y()/mm, edep/MeV);
       ofstream fs;
       fs.open("dati.csv", ofstream::app);
       fs << prePoint.perp()/mm << " " << prePoint.z()/mm << " " << edep/MeV << endl;
