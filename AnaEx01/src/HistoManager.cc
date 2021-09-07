@@ -98,12 +98,12 @@ void HistoManager::Book()
   analysisManager->CreateH1("LGap","trackL in gap (mm)", 100, 0., 5*cm);
   analysisManager->SetH1Ascii(3, true);
   // id = 4
-  analysisManager->CreateP1("TransDev","Transverse development in absorber (mm)", 3000, -5.*cm, 5.*cm, 0., 300.*MeV);
+  analysisManager->CreateP1("TransDevp1","Transverse development in absorber (mm)", 3000, -5.*cm, 5.*cm, 0., 300.*MeV);
 
   analysisManager->CreateP2(
-    "TransDev","Transverse and longitudinal development in absorber (mm)",
-    3000, 0.*cm, 5.*cm,
+    "TransDevp2","Transverse and longitudinal development in absorber (mm)",
     3000, -50.*cm, 50.*cm,
+    3000, -5.*cm, 5.*cm,
     0., 300.*MeV
   );
   // Create ntuples.

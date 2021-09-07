@@ -1,0 +1,14 @@
+# ninja log v5
+2	3372	1631032844581523247	CMakeFiles/AnaEx01.dir/shared/src/DetectorMessenger.cc.o	db8675b0746e3676
+5	3753	1631032844961527503	CMakeFiles/AnaEx01.dir/shared/src/PrimaryGeneratorAction.cc.o	1cacb732c9772c22
+1	6838	1631032848045562040	CMakeFiles/AnaEx01.dir/shared/src/DetectorConstruction.cc.o	e5b07bedbd1adfd0
+0	9293	1631032850501589544	CMakeFiles/AnaEx01.dir/AnaEx01.cc.o	e3caf78afe5b7b8b
+1	11082	1631032852277609433	CMakeFiles/AnaEx01.dir/shared/src/ActionInitialization.cc.o	8e52ee0c1ea17a35
+3	11809	1631032853001617541	CMakeFiles/AnaEx01.dir/shared/src/EventAction.cc.o	6c643347304cbe80
+3373	14542	1631032855745648270	CMakeFiles/AnaEx01.dir/shared/src/RunAction.cc.o	69e0e9c43824b64f
+3753	15445	1631032856633658214	CMakeFiles/AnaEx01.dir/shared/src/SteppingAction.cc.o	43de227785b6297b
+6839	16471	1631032857677669905	CMakeFiles/AnaEx01.dir/src/HistoManager.cc.o	b88a37fd82027e56
+16471	17409	1631032858613680388	AnaEx01	91c4f405e62110fb
+7	6303	1631033070616055636	CMakeFiles/AnaEx01.dir/src/HistoManager.cc.o	b88a37fd82027e56
+6	6463	1631033070772057386	CMakeFiles/AnaEx01.dir/shared/src/SteppingAction.cc.o	43de227785b6297b
+6463	7373	1631033071688067660	AnaEx01	91c4f405e62110fb
