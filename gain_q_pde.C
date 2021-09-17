@@ -8,7 +8,10 @@
 
 #include <TH2.h>
 #include <TStyle.h>
-#include <TCanvas.h>
+#include "TROOT.h"
+#include "TApplication.h"
+#include "TCanvas.h"
+#include "TRootCanvas.h"
 #include <TProfile.h>
 #include <TPaveText.h>
 #include <TPaveStats.h>
@@ -20,16 +23,31 @@
 #include <TMultiGraph.h>
 #include <vector>
 #include <TString.h>
-#include "TROOT.h"
 #include "TTimer.h"
+
+#include "TTreeReader.h"
+#include "TTreeReaderValue.h"
 #include "TLatex.h"
 #include "TGClient.h"
-#include "TRootCanvas.h"
 
 using namespace std;
 
 
-void gain_q_pde(TString holder, TString sipm, TString version){
+int main(const int argc, const char *argv[]) //TString holder, TString sipm, TString version){
+{
+    if(argc!=5){
+        cout << "Usage: ./..x holder_name sipm_num version_num plot[0-1]" << endl;
+        exit(-1);
+    }
+    TApplication *myapp = new TApplication("myapp", 0, 0);
+    gStyle->SetOptStat(1101);
+    gStyle->SetOptFit(111);
+
+
+    TString holder(argv[1]);
+    TString sipm(argv[2]);
+    TString version(argv[3]);
+    int plot = atoi(argv[4]);
 
     TTree *tree = new TTree();
     tree->ReadStream(cin, "V:G:sG:Q:sQ:PDE:sPDE", ',');
@@ -57,10 +75,6 @@ void gain_q_pde(TString holder, TString sipm, TString version){
         k++;
     }
 
-    for(k=0; k<trial; k++){
-        cout << overvoltage[k] << "  " << Gain[k] << endl;
-    }
-
     TGraphErrors * RGain_over= new TGraphErrors(trial, overvoltage, Gain ,overvoltageErr, GainErr);
     TGraphErrors * RCharge_over= new TGraphErrors(trial, overvoltage,Charge,overvoltageErr,ChargeErr);
     TGraphErrors * RPDE_over= new TGraphErrors(trial, overvoltage,PDE,overvoltageErr,PDEErr);
@@ -73,7 +87,7 @@ void gain_q_pde(TString holder, TString sipm, TString version){
     RCharge_over->GetXaxis()->SetTitle("Overvoltage [V]");
     RCharge_over->GetYaxis()->SetTitle("Q/Q(V_{op})");
     RCharge_over->Draw("APE");
-    TF1 *fuRQ = new TF1("fuRQ","pol1",6,11);
+    TF1 *fuRQ = new TF1("fuRQ","pol1",-100, 100);
     fuRQ->SetParameter(0,1);
     fuRQ->SetParameter(1,0.2);
     fuRQ->ReleaseParameter(0);
@@ -89,7 +103,8 @@ void gain_q_pde(TString holder, TString sipm, TString version){
     RPDE_over->GetXaxis()->SetTitle("Overvoltage [V]");
     RPDE_over->GetYaxis()->SetTitle("PDE/PDE(V_{op})");
     RPDE_over->Draw("APE");
-    TF1 *fuRPDE= new TF1("fuRPDE","[0]*(1-(1/( ([1]*x*(exp(-[2]/sqrt(x)))) * ([1]*x*(exp(-[2]/sqrt(x)))) ) ) )",6,11);
+
+    TF1 *fuRPDE= new TF1("fuRPDE","[0]*(1-(1/( ([1]*x*(exp(-[2]/sqrt(x)))) * ([1]*x*(exp(-[2]/sqrt(x)))) ) ) )", -100, 100);
     fuRPDE->SetParameter(0,1);
     fuRPDE->SetParameter(1,0.2);
     fuRPDE->SetParameter(2,0.2);
@@ -107,7 +122,7 @@ void gain_q_pde(TString holder, TString sipm, TString version){
     RGain_over->SetTitle("Gain/Gain(V_{op}) vs Overvoltage");
     RGain_over->GetXaxis()->SetTitle("Overvoltage [V]");
     RGain_over->GetYaxis()->SetTitle("G/G(V_{op})");
-    TF1 *fuRG = new TF1("fuRG","pol1", 6,11);
+    TF1 *fuRG = new TF1("fuRG","pol1", -100, 100);
     fuRG->SetParameter(0,1);
     fuRG->SetParameter(1,0.2);
     fuRG->ReleaseParameter(0);
@@ -116,6 +131,8 @@ void gain_q_pde(TString holder, TString sipm, TString version){
     gPad->Update();
 
     TCanvas *ra =new TCanvas("ra","ra");
+    TRootCanvas *rc_ra = (TRootCanvas *)ra->GetCanvasImp();
+
     ra->Connect("TCanvas", "Closed()", "TApplication", gApplication, "Terminate()");
 
     ra->Divide(3,1);
@@ -129,15 +146,7 @@ void gain_q_pde(TString holder, TString sipm, TString version){
     RPDE_over->Draw("APE");
     RPDE_over->SetTitle("PDE/PDE(V_{op}) vs Overvoltage");
 
-
-    chrono::time_point<chrono::system_clock> end;
-
-    std::chrono::milliseconds ms(30000);
-    end = chrono::system_clock::now() + ms; // this is the end point
-
-    while (chrono::system_clock::now() < end) { 
-        gSystem->ProcessEvents(); 
-        gSystem->Sleep(10);
-    }
-
+    rc_ra->Connect("CloseWindow()", "TApplication", gApplication, "Terminate()");
+    if(plot) myapp->Run();
+    return 0;
 }
