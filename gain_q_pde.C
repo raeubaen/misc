@@ -148,5 +148,10 @@ int main(const int argc, const char *argv[]) //TString holder, TString sipm, TSt
 
     rc_ra->Connect("CloseWindow()", "TApplication", gApplication, "Terminate()");
     if(plot) myapp->Run();
-    return 0;
+
+    // quality check - for the technicians
+    if(1) // not yet developed
+        return 0;
+    else
+        return -1;
 }

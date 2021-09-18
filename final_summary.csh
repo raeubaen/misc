@@ -25,8 +25,7 @@ echo .L /home/user/qa_wheel/root/concat_hist.C "\n"concat_hist\(\"{$DirName1}\",
 #rm /home/user/qa_wheel/specs/{$DirName1}_pos*full_{$DirName2}.root
 
 
-#
-# Preparing ROOT macro
-#
+g++ /home/user/qa_wheel/root/fee_gain_Final3.C `root-config --cflags --glibs` -o /home/user/qa_wheel/root/fee_gain.x
+/home/user/qa_wheel/root/fee_gain.x $Holder1 $Holder2 $DirName1 $DirName2 $WheelSteps $Nchan 1 $Version
 
-echo .L /home/user/qa_wheel/root/fee_gain_Final3.C "\n"fee_gain_Final3\(\"{$Holder1}\", \"{$Holder2}\", \"{$DirName1}\", \"{$DirName2}\", $WheelSteps, $Nchan, 1, \"{$Version}\" \) | root # -l -b -q
+#echo .L /home/user/qa_wheel/root/fee_gain_Final3.C "\n"fee_gain_Final3\(\"{$Holder1}\", \"{$Holder2}\", \"{$DirName1}\", \"{$DirName2}\", $WheelSteps, $Nchan, 1, \"{$Version}\" \) | root # -l -b -q

@@ -406,8 +406,13 @@ def single_volt_routine(Final_name, folder, version):
             thread.join()
             print(f"terminating thread for pos{n}")
 
-    subprocess.call(["/home/user/qa_wheel/root/final_summary.csh", holder0, holder1, Final_name, folder, str(WheelStep), str(N_chan), version])
-    
+    exit_code = subprocess.call(["/home/user/qa_wheel/root/final_summary.csh", holder0, holder1, Final_name, folder, str(WheelStep), str(N_chan), version])
+    if exit_code == 0:
+       return True #OK
+    else:
+       return False # not OK
+
+
 
 def doScan():
     subprocess.Popen(["/bin/bash", "/home/user/qa_wheel/root/compile_root_file.sh"])
@@ -490,7 +495,7 @@ def doScan():
                 inde = inde+1
                 i = i+1
 
-#    check_linearity(Nstep_DOWN, int(version))
+    check_result = check_linearity(Nstep_DOWN, int(version)) #returns a bool True if OK
     print("Fine Scan")
 
 
@@ -557,6 +562,11 @@ def check_linearity(Nstep_DOWN, version):
                 ], stdin=subprocess.PIPE
             )
             p.communicate(bytes(buf.read(), encoding='utf-8'))
+            exit_code = p.wait()
+            if exit_code == 0:
+              return True #OK
+            else:
+              return False # not OK
 
 def doOneAnalysis(loopval, Final_name, folder):
 

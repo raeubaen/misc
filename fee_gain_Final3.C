@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
-
+#include "TApplication.h"
 #include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,7 +29,20 @@
 #define Pmax 2000
 using namespace std;
 
-void fee_gain_Final3(TString h1,TString h2,TString HolderLabel, TString VoltageStep, int pos, int nchan, int timer, TString Version){
+int main(int argc, char *argv[]){
+  if (argc != 9)
+    cout << "Usage: ./..x holder1 holder2 holder1_holder2_vXX GainStep../Gain_vop wheel_positions(9) channel_number(4) plot[0/1] version" << endl;
+
+  TString h1(argv[1]);
+  TString h2(argv[2]);
+  TString HolderLabel(argv[3]);
+  TString VoltageStep(argv[4]);
+  int pos = atoi(argv[5]);
+  int nchan = atoi(argv[6]);
+  int plot = atoi(argv[7]);
+  TString Version(argv[8]);
+
+  TApplication *myapp = new TApplication("myapp", 0, 0);
 
   //----------------------------------------------------------------------------
   //                                 Summary 
@@ -39,20 +52,19 @@ void fee_gain_Final3(TString h1,TString h2,TString HolderLabel, TString VoltageS
       <<"h2: "<<h2<<"\n"
       <<"Holder Label: "<<HolderLabel<<"\n"
       <<"Wheel positions: "<<pos<<"\n"
-      <<"Digitizer channels: "<<nchan<<"\n"
-      <<"Display Timer: "<<timer<<endl;
+      <<"Digitizer channels: "<<nchan<<"\n"<<endl;
   TDatime *datime = new TDatime();
 
   
   //----------------------------------------------------------------------------
   //                           Canvas Timer: ON - OFF              
   //----------------------------------------------------------------------------
-  
+  /*
   if(timer!=0 && timer !=1){
     cout<<"ERROR!! Invalid value of Display Timer. Insert 0 for OFF or 1 for ON"<<endl;
     exit(1);
   }
-
+  */
   gStyle->SetOptStat(10);
   gStyle->SetOptFit(111);
 
@@ -356,15 +368,17 @@ void fee_gain_Final3(TString h1,TString h2,TString HolderLabel, TString VoltageS
     }
   }
 
-  chrono::time_point<chrono::system_clock> end;
+  TRootCanvas *rc = (TRootCanvas *)gainAll->GetCanvasImp();
 
-  std::chrono::milliseconds ms(30000);
-  end = chrono::system_clock::now() + ms; // this is the end point
+  rc->Connect("CloseWindow()", "TApplication", gApplication, "Terminate()");
+  if(plot) myapp->Run();
 
-  while (chrono::system_clock::now() < end) { 
-    gSystem->ProcessEvents(); 
-    gSystem->Sleep(10);
-  }
+
+  // quality check - for the technicians
+  if(1) // not yet developed
+    return 0;
+  else
+    return -1;
 } //end void
 
 
