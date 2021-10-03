@@ -14,6 +14,7 @@
 #include <TF1.h>
 #include <TFile.h>
 #include <string>
+#include <TLegend.h>
 #include <TGraphErrors.h>
 #include <vector>
 #include <TString.h>
@@ -32,6 +33,8 @@
 #define Qcutmax 1000
 
 using namespace std;
+
+double landau_mu[sideNum][scintNum], landau_mu_err[sideNum][scintNum];
 
 // Histograms to create
 void CRT_an::CreateHistDict(){
@@ -63,20 +66,25 @@ void HistMatrix::_draw_single(TH1* obj){
   obj->GetYaxis()->SetTitleSize(0.05);
   obj->GetXaxis()->SetTitle(_xlabel.Data());
   obj->GetYaxis()->SetTitle(_ylabel.Data());
-  if (_ndim == 1) obj->Draw(); 
-  else obj->Draw("zcol");
+  if (_ndim == 1)
+    obj->Draw();
+  else
+    obj->Draw("zcol");
   _outfile->cd();
   obj->Write();
 };
 
-void charge_pre_draw(TH1* hist, int x, int y){
-      double qpeak = hist->GetBinCenter(hist->GetMaximumBin());
-      double qmax = qpeak + 150, qmin = qpeak - 50;
-      TF1 l = TF1("l", "landau", qmin, qmax);
-      hist->Fit(&l, "R");
-      double landau_mu = l.GetParameter(0);
-      double landau_mu_err = l.GetParError(0);
-      cout << landau_mu << "  " << landau_mu_err << endl;
+void charge_pre_draw(TH1 *hist, int x, int y)
+{
+  double qpeak = hist->GetBinCenter(hist->GetMaximumBin());
+  double qmax = qpeak + 150, qmin = qpeak - 50;
+  TF1 l = TF1("l", "landau", qmin, qmax);
+  hist->Fit(&l, "R");
+  if (TString(hist->GetName()).Contains("Qmip"))
+  {
+    landau_mu[y][x] = l.GetParameter(1);
+    landau_mu_err[y][x] = l.GetParError(1);
+  }
 }
 
 int charge_cut(double q){
@@ -115,7 +123,7 @@ void CRT_an::Loop(TFile *outfile){
   gStyle->SetTitleSize(0, "t");
   Long64_t nbytes = 0, nb = 0;
   int sideTmp, scintTmp, canvas_index;
-  double Qtmp, Vtmp, Ttmp, Chi2tmp, qpeak, qmin, qmax, landau_mu, landau_mu_err;
+  double Qtmp, Vtmp, Ttmp, Chi2tmp, qpeak, qmin, qmax;
   double vp = 13;
   TH1F *histTmp;
   TF1 *l;
@@ -188,6 +196,42 @@ void CRT_an::Loop(TFile *outfile){
   }
 
   outfile->Close();
+
+  ofstream outf("landau.csv");
+  outf << "#mua, smua, mub, smub" << endl;
+  for (int isc=0; isc<scintNum; isc++){
+    for (int isd=0; isd<sideNum; isd++){
+      outf << landau_mu[isd][isc] << " " << landau_mu_err[isd][isc];
+      if(isd!=sideNum-1) outf << " ";
+      else outf << endl;
+    }
+  }
+  outf.close();
+
+
+  TCanvas *c = new TCanvas("Equalization", "Equalization");
+  c->cd();
+  double scint[8] = {0, 1, 2, 3, 4, 5, 6, 7}, scint_err[8] = {0};
+
+  TGraphErrors *eq0 = new TGraphErrors(8, scint, landau_mu[0], scint_err, landau_mu_err[0]);
+  eq0->SetName("eq0");
+  eq0->SetTitle("Charge peaks");
+  eq0->SetLineColor(kRed);
+  eq0->GetXaxis()->SetTitle("# Scintillator");
+  eq0->GetYaxis()->SetTitle("Charge (pC)");
+  eq0->GetXaxis()->SetLimits(-1, 8);
+  eq0->Draw("ap");
+  TGraphErrors *eq1 = new TGraphErrors(8, scint, landau_mu[1], scint_err, landau_mu_err[1]);
+  eq1->SetName("eq1");
+  eq1->SetLineColor(kGreen);
+  eq1->Draw("p");
+
+  auto legend = new TLegend(0.1,0.7,0.48,0.9);
+  legend->AddEntry("eq0","Side 0");
+  legend->AddEntry("eq1","Side 1");
+  legend->Draw();
+
+
   cout << "Press Ctrl+C to quit" << endl;
 
 }
