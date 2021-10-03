@@ -14,6 +14,7 @@
 #include <TF1.h>
 #include <TFile.h>
 #include <string>
+#include <TLegend.h>
 #include <TGraphErrors.h>
 #include <vector>
 #include <TString.h>
@@ -33,35 +34,57 @@
 
 using namespace std;
 
+double landau_mu[sideNum][scintNum], landau_mu_err[sideNum][scintNum];
 
 // Histograms to create
-void CRT_an::CreateHistDict(TFile *f){
+void CRT_an::CreateHistDict(){
   // si potrebbe fare con un un dataframe pandas da csv modificabile da GUI (pandasgui) che parte in python prima dell'eseguibile C++
   // in alternativa si può modificare il file tables.C (github) e fare la stessa cosa dalla gui di root
+
+  double Q_min=50, Q_max=1550, Z_min = 100, Z_max=600, T_min = 100, T_max = 350;
+  int Q_bins = 75, T_bins = 50, Z_bins = 100;
+
   hist_dict = {
-      {"QnoCut",          new HistMatrix(f, "QnoCut", 1, 8, 2, "Charge (> 2 pC) - Side %i - Scint. %i", "Q", "pC", 75, 0, 1500)},
-      {"Qmip",            new HistMatrix(f, "Qmip", 1, 8, 2, "Charge (MIP) - Side %i - Scint. %i", "Q", "pC", 75, 0, 1500)},
-      {"QTmip",           new HistMatrix(f, "QTmip", 2, 8, 2, "Time vs. Charge (MIP) - Side %i - Scint %i", "Time", "ns", 50, 200, 400, "Q", "pC", 75, 50, 1550)},
-      {"TotalQeachside",  new HistMatrix(f, "TotalQeachside", 1, 2, 1, "Total Charge on side %i", "Q", "pC", 75, 50, 1550)},
-      {"TotalQeachscint", new HistMatrix(f, "TotalQeachscint""TotalQeachscint", 1, 8, 1, "Total Charge on scint. %i", "Q", "pC", 75, 50, 1550)},
-      {"QChi2mip",        new HistMatrix(f, "QChi2mip", 2, 8, 2, "Template Chi2 vs. Charge(MIP) - Side %i - Scint. %i", "Chi2", "", 100, 0, 200, "Q", "pC", 75, 50, 1550)},
-      {"Qzmip",           new HistMatrix(f, "Qzmip", 2, 8, 1, "Z vs. Charge (MIP) - Side %i - Scint. %i", "Z", "cm", 100, -1000, 1000, "Q", "pC", 75, 50, 1550)},
-      {"QABnoCut",        new HistMatrix(f, "QABnoCut", 2, 8, 1, "Charge A vs. Charge B", "Q", "pC", 75, 0, 1500, "Q", "pC", 75, 0, 1500)},
-      {"QABmip",          new HistMatrix(f, "QABmip", 2, 8, 1, "Charge A vs. Charge B (MIP)", "Q", "pC", 75, 0, 1500, "Q", "pC", 75, 0, 1500)},
-      {"Zmip",            new HistMatrix(f, "Zmip", 1, 8, 1, "Z (MIP)", "Z", "cm", 100, -3000, 3000)},
-      {"Tsummip",         new HistMatrix(f, "Tsummip", 1, 8, 1, "Time sum (MIP)", "Time", "ns", 100, 0, 1000)}
+      CreatePair("QnoCut",          1, 8, 2, "Charge (> 2 pC) - Side %i - Scint. %i",      "Q", "pC", Q_bins, 0,     1500),
+      CreatePair("Qmip",            1, 8, 2, "Charge (MIP) - Side %i - Scint. %i",         "Q", "pC", Q_bins, Q_min, Q_max),
+      CreatePair("QTmip",           2, 8, 2, "Time vs. Charge (MIP) - Side %i - Scint %i", "Q", "pC", Q_bins, Q_min, Q_max, "Time", "ns", T_bins, T_min, T_max),
+      CreatePair("TotalQeachside",  1, 2, 1, "Total Charge on side %i",                    "Q", "pC", Q_bins, Q_min, Q_max),
+      CreatePair("TotalQeachscint", 1, 8, 1, "Total Charge on scint. %i",                  "Q", "pC", Q_bins, Q_min, Q_max),
+      CreatePair("QChi2mip",        2, 8, 2, "Chi2 vs. Charge(MIP) - Side %i - Scint. %i", "Q", "pC", Q_bins, Q_min, Q_max, "Chi2", "", 100, 0, 200),
+      CreatePair("Qzmip",           2, 8, 1, "Z vs. Charge (MIP) - Scint. %i",             "Q", "pC", Q_bins, Q_min, Q_max, "Z",    "cm", Z_bins, Z_min, Z_max),
+      CreatePair("QABnoCut",        2, 8, 1, "Q0 vs. Q1 - Scint %i",                       "Q", "pC", Q_bins, 0,     1500,  "Q",    "pC", Q_bins, 0, 1500),
+      CreatePair("QABmip",          2, 8, 1, "Q0 vs. Q1 (MIP) - Scint %i",                 "Q", "pC", Q_bins, Q_min, Q_max, "Q",    "pC", Q_bins, Q_min, Q_max),
+      CreatePair("Zmip",            1, 8, 1, "Z (MIP) - Scint %i",                         "Z", "cm", Z_bins, Z_min, Z_max),
+      CreatePair("Tsummip",         1, 8, 1, "Time sum (MIP) - Scint %i",                  "T", "ns", T_bins, 350,   550),
+      CreatePair("ZScintmip",       2, 1, 1, "Z vs.  Scint (MIP)",                         "Z", "cm", Z_bins, Z_min, Z_max, "#Scint", "", 8, 0, 8)
   };
 }
 
 
-void charge_pre_draw(TH1* hist, int x, int y){
-      double qpeak = hist->GetBinCenter(hist->GetMaximumBin());
-      double qmax = qpeak + 150, qmin = qpeak - 50;
-      TF1 l = TF1("l", "landau", qmin, qmax);
-      hist->Fit(&l, "R");
-      double landau_mu = l.GetParameter(0);
-      double landau_mu_err = l.GetParError(0);
-      cout << landau_mu << "  " << landau_mu_err << endl;
+void HistMatrix::_draw_single(TH1* obj){
+  obj->GetXaxis()->SetTitleSize(0.05);
+  obj->GetYaxis()->SetTitleSize(0.05);
+  obj->GetXaxis()->SetTitle(_xlabel.Data());
+  obj->GetYaxis()->SetTitle(_ylabel.Data());
+  if (_ndim == 1)
+    obj->Draw();
+  else
+    obj->Draw("zcol");
+  _outfile->cd();
+  obj->Write();
+};
+
+void charge_pre_draw(TH1 *hist, int x, int y)
+{
+  double qpeak = hist->GetBinCenter(hist->GetMaximumBin());
+  double qmax = qpeak + 150, qmin = qpeak - 50;
+  TF1 l = TF1("l", "landau", qmin, qmax);
+  hist->Fit(&l, "R");
+  if (TString(hist->GetName()).Contains("Qmip"))
+  {
+    landau_mu[y][x] = l.GetParameter(1);
+    landau_mu_err[y][x] = l.GetParError(1);
+  }
 }
 
 int charge_cut(double q){
@@ -92,18 +115,20 @@ int is_mip(double Q[sideNum][scintNum], int isc){
 void CRT_an::Loop(TFile *outfile){
   if (fChain == 0) return;
 
-  CreateHistDict(outfile);
+  _outfile = outfile;
+  CreateHistDict();
 
   Long64_t nentries = fChain->GetEntriesFast();
   gStyle->SetOptFit(1);
   gStyle->SetTitleSize(0, "t");
   Long64_t nbytes = 0, nb = 0;
   int sideTmp, scintTmp, canvas_index;
-  double Qtmp, Vtmp, Ttmp, Chi2tmp, qpeak, qmin, qmax, landau_mu, landau_mu_err;
+  double Qtmp, Vtmp, Ttmp, Chi2tmp, qpeak, qmin, qmax;
   double vp = 13;
   TH1F *histTmp;
   TF1 *l;
 
+  // LOOP OVER ENTRIES
   for (Long64_t jentry=0; jentry<nentries;jentry++) { 
     Long64_t ientry = LoadTree(jentry);
     if (ientry < 0) break;
@@ -114,6 +139,7 @@ void CRT_an::Loop(TFile *outfile){
     double T[sideNum][scintNum] = {0.};
     double Chi2[sideNum][scintNum] = {0.};
 
+    // LOOP OVER HITS
     for(int hit=0; hit<nCry; hit++){
       sideTmp=iSide[hit];
       scintTmp = iScint[hit];
@@ -122,6 +148,7 @@ void CRT_an::Loop(TFile *outfile){
       Chi2tmp = templChi2[hit];
       Ttmp = templTime[hit];
 
+      // Saving data for each side and each scintillator
       Q[sideTmp][scintTmp]=Qtmp;
       Chi2[sideTmp][scintTmp]=Chi2tmp;
       T[sideTmp][scintTmp]=Ttmp;
@@ -129,6 +156,7 @@ void CRT_an::Loop(TFile *outfile){
       GetHist("QnoCut", scintTmp, sideTmp)->Fill(Qtmp);
     }
   
+    // Looping over scintillators
     double Q_sum_tmp[2] = {0.};
     for(int isc = 0; isc <scintNum; isc++){
 
@@ -145,16 +173,14 @@ void CRT_an::Loop(TFile *outfile){
             GetHist("Qmip", isc, isd)->Fill(Q[isd][isc]);
             GetHist("QChi2mip", isc, isd)->Fill(Q[isd][isc], Chi2[isd][isc]);
             GetHist("QTmip", isc, isd)->Fill(Q[isd][isc], T[isd][isc]);	
-          } 
+          }
 
           GetHist("QABmip", isc, 0)->Fill( Q[0][isc], Q[1][isc]);	
-
           GetHist("Zmip", isc, 0)->Fill((T[0][isc]-T[1][isc])*vp/2);
-
           GetHist("Qzmip", isc, 0)->Fill(Q[0][isc] + Q[1][isc], (T[0][isc] - T[1][isc])*vp/2);
-
           GetHist("Tsummip", isc, 0)->Fill(T[0][isc] + T[1][isc]);
 
+          GetHist("ZScintmip", 0, 0)->Fill((T[0][isc] - T[1][isc])*vp/2, isc);
         }
       }
     }
@@ -170,21 +196,59 @@ void CRT_an::Loop(TFile *outfile){
   }
 
   outfile->Close();
+
+  ofstream outf("landau.csv");
+  outf << "#mua, smua, mub, smub" << endl;
+  for (int isc=0; isc<scintNum; isc++){
+    for (int isd=0; isd<sideNum; isd++){
+      outf << landau_mu[isd][isc] << " " << landau_mu_err[isd][isc];
+      if(isd!=sideNum-1) outf << " ";
+      else outf << endl;
+    }
+  }
+  outf.close();
+
+
+  TCanvas *c = new TCanvas("Equalization", "Equalization");
+  c->cd();
+  double scint[8] = {0, 1, 2, 3, 4, 5, 6, 7}, scint_err[8] = {0};
+
+  TGraphErrors *eq0 = new TGraphErrors(8, scint, landau_mu[0], scint_err, landau_mu_err[0]);
+  eq0->SetName("eq0");
+  eq0->SetTitle("Charge peaks");
+  eq0->SetLineColor(kRed);
+  eq0->GetXaxis()->SetTitle("# Scintillator");
+  eq0->GetYaxis()->SetTitle("Charge (pC)");
+  eq0->GetXaxis()->SetLimits(-1, 8);
+  eq0->Draw("ap");
+  TGraphErrors *eq1 = new TGraphErrors(8, scint, landau_mu[1], scint_err, landau_mu_err[1]);
+  eq1->SetName("eq1");
+  eq1->SetLineColor(kGreen);
+  eq1->Draw("p");
+
+  auto legend = new TLegend(0.1,0.7,0.48,0.9);
+  legend->AddEntry("eq0","Side 0");
+  legend->AddEntry("eq1","Side 1");
+  legend->Draw();
+
+
   cout << "Press Ctrl+C to quit" << endl;
 
 }
 
   int main(int argc, char*argv[]){
-    if(argc != 2){
-      printf("Usage: %s [file_name]\n", argv[0]);
+    if(argc != 3){
+      printf("Usage: %s [infile_name] [outfile_name]\n", argv[0]);
       exit(-1);
     }
     TApplication *myapp = new TApplication("myapp", 0, 0);
 
-    TFile *f = new TFile("CRT_hists.root","RECREATE");
+    TFile *f = new TFile(argv[2], "RECREATE");
 
     CRT_an *a = new CRT_an(argv[1]);
 
+    gStyle->SetOptStat("emr"); //entries, mean and rms
+    gROOT->ForceStyle();
     a->Loop(f);
     myapp->Run(true);
   }

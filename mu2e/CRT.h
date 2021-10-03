@@ -32,16 +32,9 @@ class HistMatrix{
     TString _name;
     TH1 ***_h_mat;
     TString _xlabel, _ylabel;
-    TFile *outfile;
+    TFile *_outfile;
 
-    void _draw_single(TH1* obj){
-      obj->GetXaxis()->SetTitle(_xlabel.Data());
-      obj->GetYaxis()->SetTitle(_ylabel.Data());
-      if (_ndim == 1) obj->Draw(); 
-      else obj->Draw("zcol");
-      outfile->cd();
-      obj->Write();
-    };
+    void _draw_single(TH1* obj);
 
   public:
 
@@ -52,10 +45,10 @@ class HistMatrix{
       int nx, int ny, 
       TString title_format,
       TString xlabel, TString xunit,
-      int xbins, int xmin, int xmax, 
+      int xbins, double xmin, double xmax, 
       TString ylabel="", TString yunit="",
-      int ybins=0, int ymin=0, int ymax=0
-    ): _name(name), _nx(nx), _ny(ny), _ndim(ndim), outfile(f)
+      int ybins=0, double ymin=0., double ymax=0.
+    ): _name(name), _nx(nx), _ny(ny), _ndim(ndim), _outfile(f)
     {
 
       if (xunit.CompareTo("")){
@@ -115,12 +108,17 @@ class HistMatrix{
           _draw_single(_h_mat[y][x]);
         }
       }
+      c->Update();
+      c->SaveAs(Form("%s.C", _name.Data()));
     };
 
 };
 
 
 class CRT_an {
+  private:
+     TFile *_outfile;
+
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
@@ -184,8 +182,9 @@ public :
    virtual void     Loop(TFile *f);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
-   virtual void     CreateHistDict(TFile *f);
+   virtual void     CreateHistDict();
    virtual TH1F*    GetHist(string name, int x, int y);
+  pair<string, HistMatrix*> CreatePair(TString, int, int, int, TString, TString, TString, int, double, double, TString, TString, int, double, double);
 };
 
 #endif
@@ -298,5 +297,28 @@ void CRT_an::Init(TTree *tree)
 TH1F* CRT_an::GetHist(string name, int x, int y){
   return (TH1F*)hist_dict[name]->GetArray()[y][x];
 }
+
+pair<string, HistMatrix*> CRT_an::CreatePair(
+  TString name,
+  int ndim, 
+  int nx, int ny, 
+  TString title_format,
+  TString xlabel, TString xunit,
+  int xbins, double xmin, double xmax, 
+  TString ylabel="", TString yunit="",
+  int ybins=0, double ymin=0., double ymax=0.
+){
+  if(ndim==1){
+    return {
+      name.Data(), new HistMatrix(_outfile, name.Data(), ndim, nx, ny, title_format, xlabel, xunit, xbins, xmin,  xmax)
+    };
+  }
+  else{
+    return {
+      name.Data(), new HistMatrix(_outfile, name.Data(), ndim, nx, ny, title_format, xlabel, xunit, xbins, xmin,  xmax, ylabel, yunit, ybins, ymin, ymax)
+    };
+  }
+};
+
 
 #endif // #ifdef CRT_an_cxx
