@@ -9,6 +9,7 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <TProfile.h>
+#include <TObjString.h>
 #include <TPaveText.h>
 #include <TPaveStats.h>
 #include <TF1.h>
@@ -30,51 +31,73 @@
 #include "CRT.h"
 
 #define QcutMin 50
-#define Qcutmax 1000
+#define Qcutmax 100000 // praticamente inf
+#define Vpeakmax 1800
+#define Chi2max 3000 //togliere selezione Chi2 dalle MIP per gli istogrammi di carica
 
 using namespace std;
 
 double landau_mu[sideNum][scintNum], landau_mu_err[sideNum][scintNum];
+
+/* Aggiungere:
+ templFit[0] (scale factor) vs. Qval
+ pedL vs templFit[2] (baseline offset)
+ pedL vs Chi2
+ pedL
+ rifare grafico come per l'equalizzazione per gli offset temporali
+ Si può fare in modo che il codice si può usare a partire da un makeClass di root senza modificare troppo
+ ad esempio facendo ereditare una class con HistMatrix + il dizionario + createpair da CRT_an (o come si chiama), 
+ così si possono leggere tutti dati root per porter sovrascrivere Loop e il resto
+ si può anche cambiare il nome della classe da define (sia per include che per il codice)
+*/
 
 // Histograms to create
 void CRT_an::CreateHistDict(){
   // si potrebbe fare con un un dataframe pandas da csv modificabile da GUI (pandasgui) che parte in python prima dell'eseguibile C++
   // in alternativa si può modificare il file tables.C (github) e fare la stessa cosa dalla gui di root
 
-  double Q_min=50, Q_max=1550, Z_min = 100, Z_max=600, T_min = 100, T_max = 350;
+  double Q_min=50, Q_max=1550, Z_min = -100, Z_max=100, T_min = -60, T_max = 60;
   int Q_bins = 75, T_bins = 50, Z_bins = 100;
 
   hist_dict = {
-      CreatePair("QnoCut",          1, 8, 2, "Charge (> 2 pC) - Side %i - Scint. %i",      "Q", "pC", Q_bins, 0,     1500),
-      CreatePair("Qmip",            1, 8, 2, "Charge (MIP) - Side %i - Scint. %i",         "Q", "pC", Q_bins, Q_min, Q_max),
-      CreatePair("QTmip",           2, 8, 2, "Time vs. Charge (MIP) - Side %i - Scint %i", "Q", "pC", Q_bins, Q_min, Q_max, "Time", "ns", T_bins, T_min, T_max),
-      CreatePair("TotalQeachside",  1, 2, 1, "Total Charge on side %i",                    "Q", "pC", Q_bins, Q_min, Q_max),
-      CreatePair("TotalQeachscint", 1, 8, 1, "Total Charge on scint. %i",                  "Q", "pC", Q_bins, Q_min, Q_max),
-      CreatePair("QChi2mip",        2, 8, 2, "Chi2 vs. Charge(MIP) - Side %i - Scint. %i", "Q", "pC", Q_bins, Q_min, Q_max, "Chi2", "", 100, 0, 200),
-      CreatePair("Qzmip",           2, 8, 1, "Z vs. Charge (MIP) - Scint. %i",             "Q", "pC", Q_bins, Q_min, Q_max, "Z",    "cm", Z_bins, Z_min, Z_max),
-      CreatePair("QABnoCut",        2, 8, 1, "Q0 vs. Q1 - Scint %i",                       "Q", "pC", Q_bins, 0,     1500,  "Q",    "pC", Q_bins, 0, 1500),
-      CreatePair("QABmip",          2, 8, 1, "Q0 vs. Q1 (MIP) - Scint %i",                 "Q", "pC", Q_bins, Q_min, Q_max, "Q",    "pC", Q_bins, Q_min, Q_max),
-      CreatePair("Zmip",            1, 8, 1, "Z (MIP) - Scint %i",                         "Z", "cm", Z_bins, Z_min, Z_max),
-      CreatePair("Tsummip",         1, 8, 1, "Time sum (MIP) - Scint %i",                  "T", "ns", T_bins, 350,   550),
-      CreatePair("ZScintmip",       2, 1, 1, "Z vs.  Scint (MIP)",                         "Z", "cm", Z_bins, Z_min, Z_max, "#Scint", "", 8, 0, 8)
+      CreatePair("QnoCut",          1, 8, 2, "Charge (> 2 pC)", "Side %i - Scint. %i",        "Q", "pC", Q_bins, 0,     1500),
+      CreatePair("Qmip",            1, 8, 2, "Charge (MIP)", "Side %i - Scint. %i",           "Q", "pC", Q_bins, Q_min, Q_max),
+      CreatePair("QTmip",           2, 8, 2, "Time vs. Charge (MIP)", "Side %i - Scint %i",   "Q", "pC", Q_bins, Q_min, Q_max, "Time", "ns", T_bins, T_min, T_max),
+      CreatePair("TotalQeachside",  1, 2, 1, "Total Charge on each side", "Side %i",          "Q", "pC", Q_bins, Q_min, Q_max),
+      CreatePair("TotalQeachscint", 1, 8, 1, "Total Charge on each scint.", "Scint. %i",      "Q", "pC", Q_bins, Q_min, Q_max),
+      CreatePair("QChi2mip",        2, 8, 2, "Chi2 vs. Charge(MIP)", "Side %i - Scint. %i",   "Q", "pC", Q_bins, Q_min, Q_max, "Chi2", "",   Chi2max/0.25, 0, Chi2max),
+      CreatePair("Qzmip",           2, 8, 1, "Z vs. Charge (MIP)", "Scint. %i",               "Q", "pC", Q_bins, Q_min, Q_max, "Z",    "cm", Z_bins, Z_min, Z_max), //fare TProfile
+      CreatePair("QABnoCut",        2, 8, 1, "Q0 vs. Q1", "Scint %i",                         "Q", "pC", Q_bins, 0,     1500,  "Q",    "pC", Q_bins, 0,     1500),
+      CreatePair("QABmip",          2, 8, 1, "Q0 vs. Q1 (MIP)", "Scint %i",                   "Q", "pC", Q_bins, Q_min, Q_max, "Q",    "pC", Q_bins, Q_min, Q_max),
+      CreatePair("Zmip",            1, 8, 1, "Z (MIP)", "Scint %i",                           "Z", "cm", Z_bins/4, Z_min, Z_max),
+      CreatePair("Tsummip",         1, 8, 1, "Time sum (MIP)", "Scint %i",                    "T", "ns", T_bins, -100,  100),
+      CreatePair("ZScintmip",       2, 1, 1, "Z vs. Scint (MIP)", "",                         "Z", "cm", Z_bins, Z_min, Z_max, "#Scint", "", 8,      0,     8),
+      CreatePair("Tmip",            1, 8, 2, "T-t0 (MIP)", "Side %i - Scint. %i",             "T", "ns", T_bins, T_min, T_max),
+      CreatePair("TnoCut",          1, 8, 2, "T-t0 (Q > 2pc)", "Side %i - Scint. %i",         "T", "ns", T_bins, T_min, T_max),
+      //CreatePair("QScalemip",       2, 8, 2, "Templ. Scale vs. Q (MIP)", "Side %i - Scint %i","Q", "pC", Q_bins, Q_min, Q_max, "Scale", "",  Q_bins, Q_min*0.6, Q_max*0.6),
+      //CreatePair("PedTemplBaseline",2, 8, 2, "Ped. vs Templ. Baseline", "Side %i - Scint %i", "Baseline", "mV", 100, -30, 30, "Pedestal", "",      "#ev.", "", ,)
   };
 }
 
+void time_pre_draw(TVirtualPad* pad, TH1 *hist, int x, int y)
+{
+  double tpeak = hist->GetBinCenter(hist->GetMaximumBin());
+  double tmax = tpeak + 50, tmin = tpeak - 50;
+  TF1 l = TF1("logn", "[0]*ROOT::Math::lognormal_pdf(x,log([1]),log([2]))", tmin, tmax);
+  hist->Fit(&l, "R");
+}
 
-void HistMatrix::_draw_single(TH1* obj){
-  obj->GetXaxis()->SetTitleSize(0.05);
-  obj->GetYaxis()->SetTitleSize(0.05);
-  obj->GetXaxis()->SetTitle(_xlabel.Data());
-  obj->GetYaxis()->SetTitle(_ylabel.Data());
-  if (_ndim == 1)
-    obj->Draw();
-  else
-    obj->Draw("zcol");
-  _outfile->cd();
-  obj->Write();
-};
+void z_pre_draw(TVirtualPad* pad, TH1 *hist, int x, int y){
+  pad->SetLogy();
+}
 
-void charge_pre_draw(TH1 *hist, int x, int y)
+void big_graph_pre_draw(TVirtualPad* pad, TH1 *hist, int x, int y){
+  hist->GetXaxis()->SetLabelOffset();
+  hist->GetXaxis()->SetTitleOffset(0.8);
+  pad->SetBottomMargin(0.2);
+}
+
+void charge_pre_draw(TVirtualPad* pad, TH1 *hist, int x, int y)
 {
   double qpeak = hist->GetBinCenter(hist->GetMaximumBin());
   double qmax = qpeak + 150, qmin = qpeak - 50;
@@ -87,15 +110,18 @@ void charge_pre_draw(TH1 *hist, int x, int y)
   }
 }
 
-int charge_cut(double q){
-  if (q > QcutMin && q < Qcutmax) return 1;
+int charge_cut(double q, double v, double chi2){
+  if (q > QcutMin && q < Qcutmax && v < Vpeakmax) return 1; // 50-100
+  else return 0;
 }
 
-int is_mip(double Q[sideNum][scintNum], int isc){
+int is_mip(
+  double **Q, double **V, double **Chi2, int isc
+){
   int ismip = 1;
   double *Q_A = Q[0], *Q_B = Q[1];
 
-  if( charge_cut(Q_A[isc]) && charge_cut(Q_B[isc])){
+  if( charge_cut(Q_A[isc], V[0][isc], Chi2[0][isc]) && charge_cut(Q_B[isc], V[1][isc], Chi2[1][isc])){
     if (isc > 0){
       if(Q_A[isc-1] > 40 || Q_B[isc-1] > 40){
       	ismip = 0;
@@ -107,53 +133,68 @@ int is_mip(double Q[sideNum][scintNum], int isc){
       }
     }
   }
-  else ismip = 0;
+
+  else{
+    ismip = 0;
+  }
+
   return ismip;
 }
 
+double** matrix_from_csv(TString filename, int nrow=sideNum, int ncol=scintNum){
+  ifstream inf(filename.Data());
+  TString temp;
+  double** arr = new double*[nrow];
+  for(int r=0; inf >> temp; r++){
+    arr[r] = new double[ncol];
+    for(int c=0; c<ncol; c++){
+      TObjString * tempobj = (TObjString * )(temp.Tokenize(",")->At(c));
+      arr[r][c] = atof(tempobj->GetString());
+    }
+  }
+  return arr;
+}
 
-void CRT_an::Loop(TFile *outfile){
+void CRT_an::Loop(){
   if (fChain == 0) return;
 
-  _outfile = outfile;
-  CreateHistDict();
+  double **time_off = matrix_from_csv("time_off.csv");
+  //double **q_peaks = matrix_from_csv("q_peaks.csv");
 
   Long64_t nentries = fChain->GetEntriesFast();
   gStyle->SetOptFit(1);
-  gStyle->SetTitleSize(0, "t");
   Long64_t nbytes = 0, nb = 0;
-  int sideTmp, scintTmp, canvas_index;
-  double Qtmp, Vtmp, Ttmp, Chi2tmp, qpeak, qmin, qmax;
-  double vp = 13;
-  TH1F *histTmp;
-  TF1 *l;
+  int sideTmp, scintTmp;
+  double Qtmp, Ttmp, Chi2tmp, Vtmp;
+  double vp = 13; //cm/ns
 
   // LOOP OVER ENTRIES
-  for (Long64_t jentry=0; jentry<nentries;jentry++) { 
+  for (Long64_t jentry=0; jentry<nentries;jentry++) { //la parte interna al loop andrebbe messa ina una funzione così come le parti prima e dopo, così la parte delicata sta in Loop nel .h
     Long64_t ientry = LoadTree(jentry);
+    if (jentry%500 == 0) cout << Form("Processing event n.%lld of %lld: %d perc.", jentry, nentries, (int)((double)jentry/nentries * 100 )) << endl;
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   
     nbytes += nb;
 
-    double Q[sideNum][scintNum] = {0.};
-    double T[sideNum][scintNum] = {0.};
-    double Chi2[sideNum][scintNum] = {0.};
+    double **Q = new double*[sideNum], **T = new double*[sideNum], **V = new double*[sideNum], **Chi2 = new double*[sideNum];
+    for(int i = 0; i<sideNum; i++){
+      Q[i] = new double[scintNum]();
+      V[i] = new double[scintNum]();
+      T[i] = new double[scintNum]();
+      Chi2[i] = new double[scintNum]();
+    }
 
     // LOOP OVER HITS
     for(int hit=0; hit<nCry; hit++){
       sideTmp=iSide[hit];
       scintTmp = iScint[hit];
 
-      Qtmp = Qval[hit];
-      Chi2tmp = templChi2[hit];
-      Ttmp = templTime[hit];
-
       // Saving data for each side and each scintillator
-      Q[sideTmp][scintTmp]=Qtmp;
-      Chi2[sideTmp][scintTmp]=Chi2tmp;
-      T[sideTmp][scintTmp]=Ttmp;
-      
-      GetHist("QnoCut", scintTmp, sideTmp)->Fill(Qtmp);
+      Q[sideTmp][scintTmp] = Qval[hit];
+      Chi2[sideTmp][scintTmp] = templChi2[hit];
+      T[sideTmp][scintTmp] = templTime[hit] - time_off[sideTmp][scintTmp]; 
+      V[sideTmp][scintTmp] = Vmax[hit];
+
     }
   
     // Looping over scintillators
@@ -168,19 +209,31 @@ void CRT_an::Loop(TFile *outfile){
 
         GetHist("QABnoCut", isc, 0)->Fill( Q[0][isc], Q[1][isc]);
 
-        if (is_mip(Q, isc)){
-          for(int isd = 0; isd < sideNum; isd++){
-            GetHist("Qmip", isc, isd)->Fill(Q[isd][isc]);
-            GetHist("QChi2mip", isc, isd)->Fill(Q[isd][isc], Chi2[isd][isc]);
-            GetHist("QTmip", isc, isd)->Fill(Q[isd][isc], T[isd][isc]);	
+        for(int isd = 0; isd < sideNum; isd++){
+          GetHist("QnoCut", isc, isd)->Fill(Q[isd][isc]);
+          GetHist("TnoCut", isc, isd)->Fill(T[isd][isc]);
+        }
+
+        if (is_mip(Q, V, Chi2, isc)){ 
+          if (Chi2[0][isc] < Chi2max && Chi2[1][isc] < Chi2max) {
+            for(int isd = 0; isd < sideNum; isd++){
+              GetHist("Tmip", isc, isd)->Fill(T[isd][isc]);
+              GetHist("QChi2mip", isc, isd)->Fill(Q[isd][isc], Chi2[isd][isc]);
+              GetHist("QTmip", isc, isd)->Fill(Q[isd][isc], T[isd][isc]);	
+            }
+
+            GetHist("Zmip", isc, 0)->Fill((T[0][isc]-T[1][isc])*vp/2);
+            GetHist("Qzmip", isc, 0)->Fill(Q[0][isc] + Q[1][isc], (T[0][isc] - T[1][isc])*vp/2);
+            GetHist("Tsummip", isc, 0)->Fill(T[0][isc] + T[1][isc]);
+
+            GetHist("ZScintmip", 0, 0)->Fill((T[0][isc] - T[1][isc])*vp/2, isc);
           }
 
-          GetHist("QABmip", isc, 0)->Fill( Q[0][isc], Q[1][isc]);	
-          GetHist("Zmip", isc, 0)->Fill((T[0][isc]-T[1][isc])*vp/2);
-          GetHist("Qzmip", isc, 0)->Fill(Q[0][isc] + Q[1][isc], (T[0][isc] - T[1][isc])*vp/2);
-          GetHist("Tsummip", isc, 0)->Fill(T[0][isc] + T[1][isc]);
+          for(int isd = 0; isd < sideNum; isd++)
+            GetHist("Qmip", isc, isd)->Fill(Q[isd][isc]);
 
-          GetHist("ZScintmip", 0, 0)->Fill((T[0][isc] - T[1][isc])*vp/2, isc);
+          GetHist("QABmip", isc, 0)->Fill( Q[0][isc], Q[1][isc]);	
+          
         }
       }
     }
@@ -190,12 +243,16 @@ void CRT_an::Loop(TFile *outfile){
   
   hist_dict["QnoCut"]->pre_draw = &charge_pre_draw;
   hist_dict["Qmip"]->pre_draw = &charge_pre_draw;
+  hist_dict["Zmip"]->pre_draw = &z_pre_draw;
+  hist_dict["ZScintmip"]->pre_draw = &big_graph_pre_draw;
+  hist_dict["TotalQeachside"]->pre_draw = &big_graph_pre_draw;
+
 
   for (auto& hist_matrix: hist_dict) {
     hist_matrix.second->draw_all();
   }
 
-  outfile->Close();
+  CloseOutFile();
 
   ofstream outf("landau.csv");
   outf << "#mua, smua, mub, smub" << endl;
@@ -236,19 +293,26 @@ void CRT_an::Loop(TFile *outfile){
 
 }
 
-  int main(int argc, char*argv[]){
+  int main(int argc, char*argv[]){ //pure qua qualcosa può andare nel .h
     if(argc != 3){
       printf("Usage: %s [infile_name] [outfile_name]\n", argv[0]);
       exit(-1);
     }
     TApplication *myapp = new TApplication("myapp", 0, 0);
 
+    int window_close_handle = 0; //DOES NOT close app if a canvas is closed
+
     TFile *f = new TFile(argv[2], "RECREATE");
 
-    CRT_an *a = new CRT_an(argv[1]);
+    CRT_an *a = new CRT_an(argv[1], f, window_close_handle);
 
     gStyle->SetOptStat("emr"); //entries, mean and rms
+    gStyle->SetTitleFontSize(0.12);
+    gStyle->SetStatFont(63);
+    gStyle->SetStatFontSize(10);
+    gStyle->SetStatW(0.4);
+    gStyle->SetTitleFontSize(0.1); 
     gROOT->ForceStyle();
-    a->Loop(f);
+    a->Loop();
     myapp->Run(true);
   }
