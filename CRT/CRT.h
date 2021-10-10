@@ -92,13 +92,13 @@ class HistMatrix{
               _h_mat[y][x] = new TH1F(Form("%s_%i_%i", name.Data(), y, x), Form(hist_title_format.Data(), y, x), xbins, xmin, xmax);
             else
               _h_mat[y][x] = new TH1F(Form("%s_%i", name.Data(), x), Form(hist_title_format.Data(), x), xbins, xmin, xmax);
-
           }
-          else if (ndim==2)
+          else if (ndim==2){
             if(ny!=1)
               _h_mat[y][x] = new TH2F(Form("%s_%i_%i", name.Data(), y, x), Form(hist_title_format.Data(), y, x), xbins, xmin, xmax, ybins, ymin, ymax);
             else
               _h_mat[y][x] = new TH2F(Form("%s_%i", name.Data(), x), Form(hist_title_format.Data(), x), xbins, xmin, xmax, ybins, ymin, ymax);
+          }
           else {
             cout << "Error: only TH1F or TH2F supported" << endl;
             exit(-1);
@@ -264,6 +264,9 @@ public:
   virtual void CloseOutFile();
   virtual TH1F *GetHist(string name, int x, int y);
   pair<string, HistMatrix*> CreatePair(TString, int, int, int, TString, TString, TString, TString, int, double, double, TString, TString, int, double, double);
+
+  void FillHists(unordered_map<string, double**> hist_array_map, int i, int j);
+  void FillHists(unordered_map<string, pair<double**, double**>> hist_array_map, int i, int j);
 };
 
 #endif
