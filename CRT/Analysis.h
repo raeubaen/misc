@@ -1,24 +1,20 @@
-//////////////////////////////////////////////////////////
-// This class has been automatically generated on
-// Wed Sep 22 11:42:27 2021 by ROOT version 5.34/14
-// from TTree CRT/CRT
-// found on file: run156Ana.root
-//////////////////////////////////////////////////////////
-#define ROOT_CLASS root_class
-
-
 #ifndef Analysis_h
 #define Analysis_h
 
-#define ROOT_CLASS root_class
-#include "root_class.h"
-#include "root_class.C"
+// ----------------------------- modify when using a new root class (from tree->MakeClass)
+#define ROOT_CLASS ana
+#include "ana.h"
+#include "ana.C"
+
+#define TREE_NAME "CRT" // in ROOT_CLASS
+// ------------------------------
 
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
 #include <TH1.h>
 #include <TH2.h>
+#include <vector>
 #include <iostream>
 #include <TApplication.h>
 #include <TH1.h>
@@ -28,11 +24,11 @@
 #include <string>
 
 using namespace std;
+
 const int sideNum = 2;
 const int scintNum = 8;
 
-void default_pre_draw(TVirtualPad* pad, TH1* obj, int x, int y){
-};
+void default_pre_draw(TVirtualPad* pad, TH1* obj, int x, int y){};
 
 class HistMatrix{
 
@@ -45,8 +41,10 @@ class HistMatrix{
 
     void _draw_single(TH1* obj){
       obj->SetFillStyle(0);
-      if (_ndim == 1)
+      if (_ndim == 1){
         obj->Draw();
+        obj->Draw("esame");
+      }
       else
         obj->Draw("zcol");
       _outfile->cd();
@@ -86,7 +84,6 @@ class HistMatrix{
       else _ylabel = ylabel;
       }
 
-
       _h_mat = new TH1**[ny];
       for (int y = 0; y < ny; y++)
         _h_mat[y] = new TH1*[nx];
@@ -97,13 +94,13 @@ class HistMatrix{
             if(ny!=1)
               _h_mat[y][x] = new TH1F(Form("%s_%i_%i", name.Data(), y, x), Form(hist_title_format.Data(), y, x), xbins, xmin, xmax);
             else
-              _h_mat[y][x] = new TH1F(Form("%s_%i", name.Data(), x), Form(hist_title_format.Data(), x), xbins, xmin, xmax);
+              _h_mat[y][x] = new TH1F(Form("%s_%i",    name.Data(), x),    Form(hist_title_format.Data(), x),    xbins, xmin, xmax);
           }
           else if (ndim==2){
             if(ny!=1)
               _h_mat[y][x] = new TH2F(Form("%s_%i_%i", name.Data(), y, x), Form(hist_title_format.Data(), y, x), xbins, xmin, xmax, ybins, ymin, ymax);
             else
-              _h_mat[y][x] = new TH2F(Form("%s_%i", name.Data(), x), Form(hist_title_format.Data(), x), xbins, xmin, xmax, ybins, ymin, ymax);
+              _h_mat[y][x] = new TH2F(Form("%s_%i",    name.Data(), x),    Form(hist_title_format.Data(), x),    xbins, xmin, xmax, ybins, ymin, ymax);
           }
           else {
             cout << "Error: only TH1F or TH2F supported" << endl;
@@ -206,7 +203,7 @@ private:
 public:
   Analysis(TString infileName, TFile *f, int, TTree *tree = 0);
   virtual void Loop() override;
-  virtual void CreateHistDict();
+  virtual void CreateHistDict(vector <Double_t> v = {0.});
   virtual void CloseOutFile();
   virtual TH1F *GetHist(string name, int x, int y);
   pair<string, HistMatrix*> CreatePair(TString, int, int, int, TString, TString, TString, TString, int, double, double, TString, TString, int, double, double);
@@ -217,10 +214,21 @@ public:
 
 #endif
 
-Analysis::Analysis(TString _infileName, TFile *f, int window_close_handle, TTree *tree) : 
-  _outfile(f), _window_close_handle(window_close_handle)
+TTree * GetTree(TString infileName){
+  TTree *tree;
+  TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject(infileName.Data());
+      if (!f || !f->IsOpen()) {
+         f = new TFile(infileName.Data());
+      }
+      f->GetObject(TREE_NAME, tree);
+  return tree;
+}
+
+Analysis::Analysis(TString infileName, TFile *f, int window_close_handle, TTree *tree) : 
+  _outfile(f), _window_close_handle(window_close_handle), 
+  ROOT_CLASS(GetTree(infileName))
 {
-  CreateHistDict();
+  ;
 };
 
 void Analysis::CloseOutFile(){
@@ -269,7 +277,6 @@ void Analysis::FillHists(unordered_map<string, pair<double**, double**>> hist_ar
     hist->Fill(xvalue, yvalue);
   }
 }
-
 
 void fill_arrays(unordered_map<double**, double> arr_value_map, int i, int j){
   for(auto &pair: arr_value_map) pair.first[i][j] = pair.second;

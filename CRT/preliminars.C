@@ -28,17 +28,20 @@
 #include <TDatime.h>
 #include <time.h>
 
-#include "CRT.h"
+#include "Analysis.h"
 
 #define QcutMin 50
-#define Qcutmax 1000
+#define Qcutmax 100000 // praticamente inf
+#define Vpeakmax 1800
+#define Chi2max 3000 //togliere selezione Chi2 dalle MIP per gli istogrammi di carica
+
 
 using namespace std;
 
 double time_mu[sideNum][scintNum];
 
 // Histograms to create
-void CRT_an::CreateHistDict(){
+void Analysis::CreateHistDict(vector <Double_t>){
   // si potrebbe fare con un un dataframe pandas da csv modificabile da GUI (pandasgui) che parte in python prima dell'eseguibile C++
   // in alternativa si può modificare il file tables.C (github) e fare la stessa cosa dalla gui di root
 
@@ -65,15 +68,18 @@ void time_pre_draw(TVirtualPad* pad, TH1 *hist, int x, int y)
   time_mu[y][x] = l.GetParameter(1);
 }
 
-int charge_cut(double q){
-  if (q > QcutMin && q < Qcutmax) return 1;
+int charge_cut(double q, double v, double chi2){
+  if (q > QcutMin && q < Qcutmax && v < Vpeakmax) return 1; // 50-100
+  else return 0;
 }
 
-int is_mip(double Q[sideNum][scintNum], int isc){
+int is_mip(
+  double **Q, double **V, double **Chi2, int isc
+){
   int ismip = 1;
   double *Q_A = Q[0], *Q_B = Q[1];
 
-  if( charge_cut(Q_A[isc]) && charge_cut(Q_B[isc])){
+  if( charge_cut(Q_A[isc], V[0][isc], Chi2[0][isc]) && charge_cut(Q_B[isc], V[1][isc], Chi2[1][isc])){
     if (isc > 0){
       if(Q_A[isc-1] > 40 || Q_B[isc-1] > 40){
       	ismip = 0;
@@ -85,11 +91,15 @@ int is_mip(double Q[sideNum][scintNum], int isc){
       }
     }
   }
-  else ismip = 0;
+
+  else{
+    ismip = 0;
+  }
+
   return ismip;
 }
 
-void CRT_an::Loop(){
+void Analysis::Loop(){
   if (fChain == 0) return;
 
   Long64_t nentries = fChain->GetEntriesFast();
@@ -99,6 +109,8 @@ void CRT_an::Loop(){
   double Qtmp, Ttmp, Chi2tmp;
   double vp = 13; //cm/ns
 
+  CreateHistDict({});
+
   // LOOP OVER ENTRIES
   for (Long64_t jentry=0; jentry<nentries;jentry++) { 
     Long64_t ientry = LoadTree(jentry);
@@ -106,30 +118,37 @@ void CRT_an::Loop(){
     nb = fChain->GetEntry(jentry);   
     nbytes += nb;
 
-    double Q[sideNum][scintNum] = {0.};
-    double T[sideNum][scintNum] = {0.};
+    double **Q, **T, **V, **Chi2;
+    
+    list<double ***> arr_list = {&Q, &T, &V, &Chi2};
+
+    for(double*** &arr: arr_list) {
+      *arr = new double*[sideNum];
+      for(int i = 0; i<sideNum; i++){
+        (*arr)[i] = new double[scintNum]();
+      } 
+    }    
 
     // LOOP OVER HITS
     for(int hit=0; hit<nCry; hit++){
       sideTmp=iSide[hit];
       scintTmp = iScint[hit];
 
-      Qtmp = Qval[hit];
-      Ttmp = templTime[hit]; 
-
-      // Saving data for each side and each scintillator
-      Q[sideTmp][scintTmp]=Qtmp;
-      T[sideTmp][scintTmp]= Ttmp;
+      fill_arrays({
+        {Q, Qval[hit]}, {Chi2, templChi2[hit]}, {T, templTime[hit]}, {V, Vmax[hit]},
+      }, sideTmp, scintTmp);
       
-      GetHist("TnoCut_off", scintTmp, sideTmp)->Fill(Ttmp);
     }
   
     // Looping over scintillators
     for(int isc = 0; isc <scintNum; isc++){
 
       if( Q[1][isc]>0. && Q[0][isc]>0.){ //if there is > 2pC in both sides (refers to Qcut in analysis_CRT.C)
+        for(int isd = 0; isd < sideNum; isd++){
+          GetHist("TnoCut_off", isc, isd)->Fill(T[isd][isc]);
+        }
 
-        if (is_mip(Q, isc)){
+        if (is_mip(Q, V, Chi2, isc)){
           for(int isd = 0; isd < sideNum; isd++){
             GetHist("Tmip_off", isc, isd)->Fill(T[isd][isc]);
           }
@@ -178,7 +197,7 @@ int main(int argc, char *argv[])
 
   int window_close_handle = 1; //closes app if a canvas is closed
 
-  CRT_an *a = new CRT_an(argv[1], f, window_close_handle);
+  Analysis *a = new Analysis(argv[1], f, window_close_handle);
 
   gStyle->SetOptStat("emr"); //entries, mean and rms
   gStyle->SetTitleFontSize(0.12);
