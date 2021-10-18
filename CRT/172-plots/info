@@ -1,0 +1,11 @@
+run172
+trigger con CRT + 2 paletta orizzontali di 10cm al centro sopra e sotto il crt
+soglia sulle somme a 30mV
+soglie offline per MIP:
+QcutMin 50
+Qcutmax 1000
+Vpeakmax 1800
++ Q < 40 nei 4 SiPM adiacenti
+
+soglia per timing:
+Chi2max 10

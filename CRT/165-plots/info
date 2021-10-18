@@ -1,0 +1,14 @@
+run165
+soglia a 40mV ma il primo scintillatore non funzionava causa fan-in fan-out
+soglie offline per MIP:
+QcutMin 50
+Qcutmax 1000
+Vpeakmax 1800
+Chi2max 30
++ Q < 40 nei 4 SiPM adiacenti 
+
+dopo aver modificato in step2 i limiti del fattore di scala per il template
+da 190-800 a 30-800 come più consono
+e il range per la Z da -80 a 80
+
++ aggiustamenti grafici

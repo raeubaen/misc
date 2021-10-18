@@ -1,6 +1,11 @@
 #!/bin/tcsh
 
-g++ CRT.C -g -Wall `root-config --cflags --glibs` -o CRT.x
+g++ plots.C -g `root-config --cflags --glibs` -o plots.x
 if ($? == 0) then
-	./CRT.x run$1_ana.root run$1_hist.root
+  g++ preliminars.C -g `root-config --cflags --glibs` -o preliminars.x
+
+  if ($? == 0) then
+    ./preliminars.x run$1_ana.root hists/run$1_hist.root
+    ./plots.x run$1_ana.root hists/run$1_hist.root
+  endif
 endif

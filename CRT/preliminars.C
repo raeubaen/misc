@@ -30,11 +30,6 @@
 
 #include "Analysis.h"
 
-#define QcutMin 50
-#define Qcutmax 100000 // praticamente inf
-#define Vpeakmax 1800
-#define Chi2max 3000 //togliere selezione Chi2 dalle MIP per gli istogrammi di carica
-
 
 using namespace std;
 
@@ -66,37 +61,6 @@ void time_pre_draw(TVirtualPad* pad, TH1 *hist, int x, int y)
   hist->Fit(&l, "R");
 
   time_mu[y][x] = l.GetParameter(1);
-}
-
-int charge_cut(double q, double v, double chi2){
-  if (q > QcutMin && q < Qcutmax && v < Vpeakmax) return 1; // 50-100
-  else return 0;
-}
-
-int is_mip(
-  double **Q, double **V, double **Chi2, int isc
-){
-  int ismip = 1;
-  double *Q_A = Q[0], *Q_B = Q[1];
-
-  if( charge_cut(Q_A[isc], V[0][isc], Chi2[0][isc]) && charge_cut(Q_B[isc], V[1][isc], Chi2[1][isc])){
-    if (isc > 0){
-      if(Q_A[isc-1] > 40 || Q_B[isc-1] > 40){
-      	ismip = 0;
-      }
-    }
-    if (isc < scintNum - 1){
-      if(Q_A[isc+1] > 40 || Q_B[isc+1] > 40){
-	      ismip = 0;
-      }
-    }
-  }
-
-  else{
-    ismip = 0;
-  }
-
-  return ismip;
 }
 
 void Analysis::Loop(){
@@ -134,7 +98,7 @@ void Analysis::Loop(){
       sideTmp=iSide[hit];
       scintTmp = iScint[hit];
 
-      fill_arrays({
+      FillArrays({
         {Q, Qval[hit]}, {Chi2, templChi2[hit]}, {T, templTime[hit]}, {V, Vmax[hit]},
       }, sideTmp, scintTmp);
       
@@ -148,7 +112,7 @@ void Analysis::Loop(){
           GetHist("TnoCut_off", isc, isd)->Fill(T[isd][isc]);
         }
 
-        if (is_mip(Q, V, Chi2, isc)){
+        if (is_mip(Q, V, isc)){
           for(int isd = 0; isd < sideNum; isd++){
             GetHist("Tmip_off", isc, isd)->Fill(T[isd][isc]);
           }
@@ -183,30 +147,8 @@ void Analysis::Loop(){
   cout << "Press Ctrl+C to quit" << endl;
 }
 
-
 int main(int argc, char *argv[])
 {
-  if (argc != 3)
-  {
-    printf("Usage: %s [infile_name] [outfile_name]\n", argv[0]);
-    exit(-1);
-  }
-  TApplication* myapp = new TApplication("myapp", 0, 0);
-
-  TFile *f = new TFile(argv[2], "RECREATE");
-
-  int window_close_handle = 1; //closes app if a canvas is closed
-
-  Analysis *a = new Analysis(argv[1], f, window_close_handle);
-
-  gStyle->SetOptStat("emr"); //entries, mean and rms
-  gStyle->SetTitleFontSize(0.12);
-  gStyle->SetStatFont(63);
-  gStyle->SetStatFontSize(10);
-  gStyle->SetStatW(0.4);
-  gStyle->SetTitleFontSize(0.1); 
-  gROOT->ForceStyle();
-
-  a->Loop();
-  myapp->Run(true);
+  int window_close_handle = -1; //no plots
+  Analysis::Run(argc, argv, window_close_handle);
 }

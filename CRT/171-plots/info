@@ -1,0 +1,9 @@
+run171
+trigger con CRT + paletta orizzontale di 10cm al centro
+soglia a 30mV ma il quinto scintillatore non funzionava causa fan-in fan-out
+soglie offline per MIP:
+QcutMin 50
+Qcutmax 1000
+Vpeakmax 1800
+Chi2max 30
++ Q < 40 nei 4 SiPM adiacenti 

@@ -1,0 +1,2 @@
+#!/bin/bash
+root $1 -e "`echo $1 | awk -F/ '{print $NF}' | awk -F. '{print $1}'`->Draw()"
