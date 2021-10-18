@@ -98,14 +98,14 @@ void Analysis::CreateHistDict(vector <Double_t> pars){
 
   long nentries = (long)pars[0];
   double Q_min=50, Q_max=1550, Z_min = -30, Z_max=30, T_min = -25, T_max = 25;
-  int Q_bins = 75, T_bins = 50, Z_bins = 50; //Z_bins vede essere messo a 100 
+  int Q_bins = 75, T_bins = 50, Z_bins = 100; //Z_bins vede essere messo a 100 
 
   hist_dict = {
     CreatePair("TotQperside",  1, 2, 1, "Total Charge on each side","Side %i",                  "Q",        "pC", Q_bins,   Q_min, Q_max),
 
     CreatePair("TotQperscint", 1, 8, 1, "Total Charge on each scint.", "Scint %i",              "Q",        "pC", Q_bins,   Q_min, Q_max),
     CreatePair("Tsummip",      1, 8, 1, "Time sum (MIP)","Scint %i",                            "T",        "ns", T_bins,   -100,  100),
-    CreatePair("SideAsymm",    1, 8, 1, "L/R charge asymmetry", "Scint %i",  "#frac{Q[A]-Q[B]}{Q[A]+Q[B]}",  "",  400,      -1,    1),
+    CreatePair("SideAsymmMIP", 1, 8, 1, "L/R charge asymmetry (MIP)", "Scint %i",  "#frac{Q[A]-Q[B]}{Q[A]+Q[B]}",  "",  400,      -1,    1),
 
     CreatePair("Zmip",         1, 2, 4, "Z (MIP)", "%i %i",                                     "Z",        "cm", Z_bins,   -25,   25),
 
@@ -130,6 +130,7 @@ void Analysis::CreateHistDict(vector <Double_t> pars){
   //CreatePair("PedNevent",    2, 8, 2, "Pedestal vs. Ev. Num.", "Side %i - Scint %i",          "Pedestal", "pC", 300,      -50,   50,    "Evnum",   nentries,     0,         nentries),
     
     CreatePair("Qzmip",        2, 8, 1, "Z vs. Charge (MIP)", "Scint. %i",                      "Q",        "pC", Q_bins,   Q_min, Q_max, "Z",       "cm", Z_bins*4, Z_min,     Z_max), //fare TProfile
+    CreatePair("QAsymmMIP",    2, 8, 1, "L/R charge asymmetry vs. Q (MIP)", "Scint %i",  "#frac{Q[A]-Q[B]}{Q[A]+Q[B]}",  "",  400,      -1,    1, "Q", "pC", Q_bins, Q_min, Q_max),
 
   };
 }
@@ -213,7 +214,6 @@ void Analysis::Loop(){
       if( Q[1][isc]>0. && Q[0][isc]>0.){ //if Q > 2pC in both sides (refers to Qcut in analysis_CRT.C)
 
         GetHist("QABnoCut", isc%4, isc/4)->Fill( Q[0][isc], Q[1][isc]);
-        GetHist("SideAsymm", isc, 0)->Fill( (Q[0][isc] - Q[1][isc]) / (Q[0][isc] + Q[1][isc]) );
         if((isc+1)%8 > 1) //not 0 or 7
           GetHist("QSharing", (isc-1)%3, (isc-1)/3)->Fill(  Q[0][isc] + Q[1][isc] , Q[0][isc+1] + Q[1][isc+1] + Q[0][isc-1] + Q[1][isc-1]);
 
@@ -225,9 +225,11 @@ void Analysis::Loop(){
         }
 
         if (is_mip(Q, V, isc)){ 
-          GetHist("Zmip", isc%2, isc/2)->Fill((T[0][isc]-T[1][isc])*vp/2);
+          GetHist("SideAsymmMIP", isc, 0)->Fill( (Q[0][isc] - Q[1][isc]) / (Q[0][isc] + Q[1][isc]) );
+          GetHist("QAsymmMIP", isc, 0)->Fill( (Q[0][isc] - Q[1][isc]) / (Q[0][isc] + Q[1][isc]), (Q[0][isc] + Q[1][isc]) );
 
           if (Chi2[0][isc] < Chi2max && Chi2[1][isc] < Chi2max) {
+
             for(int isd = 0; isd < sideNum; isd++){
               FillHists({
                 {"Tmip", T}, {"Pedestal", Ped}, {"Chi2", Chi2}
@@ -239,6 +241,8 @@ void Analysis::Loop(){
 
             GetHist("Tsummip", isc, 0)->Fill(T[0][isc] + T[1][isc]);
             GetHist("Qzmip", isc, 0)->Fill(Q[0][isc] + Q[1][isc], (T[0][isc] - T[1][isc])*vp/2);
+            GetHist("Zmip", isc%2, isc/2)->Fill((T[0][isc]-T[1][isc])*vp/2);
+
             GetHist("ZScintmip", 0, 0)->Fill((T[0][isc] - T[1][isc])*vp/2, isc);
           }
 
@@ -267,7 +271,7 @@ void Analysis::Loop(){
   hist_dict["QSharing"]->pre_draw = &QSharing_pre_draw;
   hist_dict["ZScintmip"]->pre_draw = &big_graph_pre_draw;
   hist_dict["TotQperside"]->pre_draw = &big_graph_pre_draw;
-  hist_dict["SideAsymm"]->pre_draw = &asymm_pre_draw;
+  hist_dict["SideAsymmMIP"]->pre_draw = &asymm_pre_draw;
 
 
   for (auto& hist_matrix: hist_dict) {

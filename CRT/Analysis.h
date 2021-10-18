@@ -52,6 +52,20 @@ const int scintNum = 8;
 
 void default_pre_draw(TVirtualPad* pad, TH1* obj, int x, int y){};
 
+void default_draw_single(TH1 *obj, int ndim, TFile *outfile)
+{
+  obj->SetFillStyle(0);
+  if (ndim == 1)
+  {
+    obj->Draw("same");
+    obj->Draw("esame");
+  }
+  else
+    obj->Draw("zcolsame");
+  outfile->cd();
+  obj->Write();
+}
+
 class HistMatrix{
 
   private:
@@ -61,17 +75,7 @@ class HistMatrix{
     TFile *_outfile;
     int _window_close_handle;
 
-    void _draw_single(TH1* obj){
-      obj->SetFillStyle(0);
-      if (_ndim == 1){
-        obj->Draw("same");
-        obj->Draw("esame");
-      }
-      else
-        obj->Draw("zcolsame");
-      _outfile->cd();
-      obj->Write();
-    };
+    
 
   public:
 
@@ -135,6 +139,7 @@ class HistMatrix{
     TH1*** GetArray(){ return _h_mat;};
 
     void (*pre_draw)(TVirtualPad* pad, TH1*, int, int) = &default_pre_draw; //by default no fit and no options
+    void (*draw_single)(TH1 *obj, int ndim, TFile *outfile) = &default_draw_single; //by default no fit and no options
 
     void draw_all(){
      
@@ -199,7 +204,7 @@ class HistMatrix{
 
           pre_draw(pad, obj, x, y);
 
-          _draw_single(obj);
+          draw_single(obj, _ndim, _outfile);
 
           pad->Update();
 
@@ -231,7 +236,7 @@ private:
 public:
   Analysis(TString infileName, TFile *f, int, TTree *tree = 0);
   virtual void Loop() override;
-  virtual void CreateHistDict(vector <Double_t> v = {0.});
+  virtual void CreateHistDict(vector <Double_t> v = {0.}){hist_dict={};};
   virtual void CloseOutFile();
   virtual TH1F *GetHist(string name, int x, int y);
   pair<string, HistMatrix*> CreatePair(
